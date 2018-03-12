@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+data # ignore data directory
+CMakeFiles
+CMakeCache.txt
+
+Makefile
+cmake_install.cmake
+
+ImplementacjePrzemyslowe
