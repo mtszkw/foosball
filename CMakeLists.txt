@@ -9,7 +9,6 @@ file(GLOB SRC
 )
 
 set (CMAKE_CXX_STANDARD 17)
-set (CMAKE_CXX_FLAGS "-O2 -march=native -Wall -Wextra -pedantic")
 
 add_executable(ImplementacjePrzemyslowe ${SRC})
 
