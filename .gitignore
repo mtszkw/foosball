@@ -31,7 +31,8 @@
 *.out
 *.app
 
-data # ignore data directory
+data/ # ignore data directory
+build/
 CMakeFiles
 CMakeCache.txt
 
