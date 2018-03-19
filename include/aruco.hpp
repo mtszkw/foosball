@@ -16,6 +16,7 @@ struct ArucoMarker
     const static int INVALID_ID = -1;
 };
 
+cv::Ptr<cv::aruco::Dictionary> createDictionary(std::string path, int correction);
 void detectArucoOnFrame(cv::Mat &frame, cv::Ptr<cv::aruco::Dictionary> arucoDictionary,
     std::vector<ArucoMarker> &found, std::vector<ArucoMarker> &rejected,
     cv::Ptr<cv::aruco::DetectorParameters> detectorParameters);
