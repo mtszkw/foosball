@@ -15,3 +15,17 @@ add_executable(ImplementacjePrzemyslowe ${SRC})
 
 target_link_libraries(ImplementacjePrzemyslowe ${OpenCV_LIBS})
 target_include_directories(ImplementacjePrzemyslowe PRIVATE "./include/")
+
+set(SOURCE_TEST_FILES test/TestCase.cpp)
+
+add_executable (Test ${SOURCE_TEST_FILES})
+
+target_link_libraries(Test ${OpenCV_LIBS})
+target_include_directories(Test PRIVATE "./include/")
+
+enable_testing()
+
+add_test (NAME Test1 COMMAND Test
+    --report_level=detailed
+    --log_level=all
+    --color_output=yes)
