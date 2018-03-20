@@ -1,33 +1,49 @@
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <iostream>
-#include <windows.h>
-#include <windowsx.h>
+#include <filesystem>
 
-using namespace cv;
-using namespace std;
+#include <opencv2/opencv.hpp>
 
-HWND hwnd;              
-HANDLE hf;              
+#include "cxxopts.hpp"
 
-int main()
+
+cxxopts::ParseResult parseConfiguration(cxxopts::Options &options, int argc, const char *argv[])
 {
-	string path;
-	OPENFILENAME ofn;
-	char filename[MAX_PATH] = "";
-	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = hwnd;
-	ofn.lpstrFilter = "Pliki wideo (*.avi)\0*.avi\0Wszystkie pliki\0*.*\0";
-	ofn.nMaxFile = MAX_PATH;
-	ofn.lpstrFile = filename;
-	ofn.lpstrDefExt = "avi";
-	ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-	Mat frame;
-	if (GetOpenFileName(&ofn)==TRUE)
-		path = ofn.lpstrFile;
-	VideoCapture capture(path);
-	namedWindow("my_window");
+	try
+	{
+		const auto config = options.parse(argc, argv);
+		if (!config.count("input_path") || config.count("help"))
+		{
+			std::cerr << options.help({ "" }) << std::endl;
+			exit(EXIT_FAILURE);
+		}
+		return config;
+	}
+	catch (const cxxopts::OptionException& ex)
+	{
+		std::cerr << "FAILURE: Error while parsing options (" << ex.what() << ")\n";
+		exit(EXIT_FAILURE);
+	}
+}
+
+int main(int argc, const char *argv[])
+{
+	cxxopts::Options options(argv[0], "Implementacje Przemyslowe");
+	options.add_options("")
+		("h,help", "Display help")
+		("i,input_path", "Input video file path", cxxopts::value<std::string>());
+
+	const auto config = parseConfiguration(options, argc, argv);
+	const std::string input_path = config["input_path"].as<std::string>();
+
+	if (!std::experimental::filesystem::exists(input_path))
+	{
+		std::cerr << "FAILURE: Input file \"" << input_path << "\" does not exist.\n";
+		exit(EXIT_FAILURE);
+	}
+
+	cv::Mat frame;
+	cv::VideoCapture capture(input_path);
+	cv::namedWindow("my_window");
 
 	for (;;) {
 		capture >> frame;
