@@ -6,15 +6,25 @@
 #include <vector>
 
 namespace aruco {
-    struct ArucoMarker 
+    class ArucoMarker 
     {
-        int id;
-        std::vector<cv::Point2f> corners;
+        private:
+            int id;
+            std::vector<cv::Point2f> corners;
 
-        ArucoMarker(int id, const std::vector<cv::Point2f> &corners)
-            : id(id), corners(corners) {};
+        public:
+            ArucoMarker(int id, const std::vector<cv::Point2f> &corners)
+                : id(id), corners(corners) {};
+            
+            // Lets do it inline
+            bool isValid() const { return id != INVALID_ID; };
+            int getId() const { return id; };
+            const std::vector<cv::Point2f> &getCorners() const {
+                return corners;
+            }
 
-        const static int INVALID_ID = -1;
+            const cv::Point2f getMiddle() const;
+            const static int INVALID_ID = -1;
     };
 
     cv::Ptr<cv::aruco::Dictionary> createDictionary(std::string path, int correction);

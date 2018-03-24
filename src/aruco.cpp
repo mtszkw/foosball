@@ -63,13 +63,25 @@ namespace aruco {
 
     void drawMarkersOnFrame(cv::Mat &frame, const std::vector<ArucoMarker> &markers)
     {
-        for (ArucoMarker marker : markers) {
-            auto color = (marker.id == ArucoMarker::INVALID_ID ? CV_RGB(255, 0, 0) : CV_RGB(0, 255, 0));
+        for (const ArucoMarker &marker : markers) {
+            auto color = (marker.isValid() ? CV_RGB(0, 255, 0) : CV_RGB(255, 0, 0));
+            const std::vector<cv::Point2f> & corners = marker.getCorners();
 
-            cv::line(frame, marker.corners[0], marker.corners[1], color);
-            cv::line(frame, marker.corners[2], marker.corners[1], color);
-            cv::line(frame, marker.corners[2], marker.corners[3], color);
-            cv::line(frame, marker.corners[0], marker.corners[3], color);
+            cv::line(frame, corners[0], corners[1], color);
+            cv::line(frame, corners[2], corners[1], color);
+            cv::line(frame, corners[2], corners[3], color);
+            cv::line(frame, corners[0], corners[3], color);
         }
+    }
+
+    const cv::Point2f ArucoMarker::getMiddle() const {
+        cv::Point2f ret;
+        for (cv::Point2f i : corners) {
+            ret += i;
+        }
+        ret.x /= corners.size();
+        ret.y /= corners.size();
+
+        return ret;
     }
 }
