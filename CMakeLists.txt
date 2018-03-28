@@ -24,7 +24,4 @@ target_include_directories(Test PRIVATE "./include/")
 
 enable_testing()
 
-add_test (NAME Test1 COMMAND Test
-    --report_level=detailed
-    --log_level=all
-    --color_output=yes)
+add_test (NAME Test1 COMMAND Test)

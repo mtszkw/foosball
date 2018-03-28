@@ -40,3 +40,8 @@ Makefile
 cmake_install.cmake
 
 ImplementacjePrzemyslowe
+
+#VS2017
+.vs/
+CMakeSettings.json
+CppProperties.json
