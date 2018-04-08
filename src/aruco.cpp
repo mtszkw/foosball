@@ -81,27 +81,48 @@ namespace aruco {
 
             cv::FileStorage configurationFile(path, cv::FileStorage::READ);
 
-            _readIfExist(configurationFile, "adaptiveThreshConstant", detector->adaptiveThreshConstant);
-            _readIfExist(configurationFile, "adaptiveThreshConstant", detector->adaptiveThreshConstant);
-            _readIfExist(configurationFile, "adaptiveThreshWinSizeMax", detector->adaptiveThreshWinSizeMax);
-            _readIfExist(configurationFile, "adaptiveThreshWinSizeMin", detector->adaptiveThreshWinSizeMin);
-            _readIfExist(configurationFile, "adaptiveThreshWinSizeStep", detector->adaptiveThreshWinSizeStep);
-            _readIfExist(configurationFile, "cornerRefinementMaxIterations", detector->cornerRefinementMaxIterations);
-            _readIfExist(configurationFile, "cornerRefinementMinAccuracy", detector->cornerRefinementMinAccuracy);
-            _readIfExist(configurationFile, "cornerRefinementWinSize", detector->cornerRefinementWinSize);
-            _readIfExist(configurationFile, "cornerRefinementMethod", detector->cornerRefinementMethod);
-            _readIfExist(configurationFile, "errorCorrectionRate", detector->errorCorrectionRate);
-            _readIfExist(configurationFile, "markerBorderBits", detector->markerBorderBits);
-            _readIfExist(configurationFile, "maxErroneousBitsInBorderRate", detector->maxErroneousBitsInBorderRate);
-            _readIfExist(configurationFile, "maxMarkerPerimeterRate", detector->maxMarkerPerimeterRate);
-            _readIfExist(configurationFile, "minCornerDistanceRate", detector->minCornerDistanceRate);
-            _readIfExist(configurationFile, "minDistanceToBorder", detector->minDistanceToBorder);
-            _readIfExist(configurationFile, "minMarkerDistanceRate", detector->minMarkerDistanceRate);
-            _readIfExist(configurationFile, "minMarkerPerimeterRate", detector->minMarkerPerimeterRate);
-            _readIfExist(configurationFile, "minOtsuStdDev", detector->minOtsuStdDev);
-            _readIfExist(configurationFile, "perspectiveRemoveIgnoredMarginPerCell", detector->perspectiveRemoveIgnoredMarginPerCell);
-            _readIfExist(configurationFile, "perspectiveRemovePixelPerCell", detector->perspectiveRemovePixelPerCell);
-            _readIfExist(configurationFile, "polygonalApproxAccuracyRate", detector->polygonalApproxAccuracyRate);  
+            _readIfExist(configurationFile, "adaptiveThreshConstant", 
+                detector->adaptiveThreshConstant);
+            _readIfExist(configurationFile, "adaptiveThreshConstant", 
+                detector->adaptiveThreshConstant);
+            _readIfExist(configurationFile, "adaptiveThreshWinSizeMax", 
+                detector->adaptiveThreshWinSizeMax);
+            _readIfExist(configurationFile, "adaptiveThreshWinSizeMin", 
+                detector->adaptiveThreshWinSizeMin);
+            _readIfExist(configurationFile, "adaptiveThreshWinSizeStep", 
+                detector->adaptiveThreshWinSizeStep);
+            _readIfExist(configurationFile, "cornerRefinementMaxIterations", 
+                detector->cornerRefinementMaxIterations);
+            _readIfExist(configurationFile, "cornerRefinementMinAccuracy", 
+                detector->cornerRefinementMinAccuracy);
+            _readIfExist(configurationFile, "cornerRefinementWinSize", 
+                detector->cornerRefinementWinSize);
+            _readIfExist(configurationFile, "cornerRefinementMethod", 
+                detector->cornerRefinementMethod);
+            _readIfExist(configurationFile, "errorCorrectionRate", 
+                detector->errorCorrectionRate);
+            _readIfExist(configurationFile, "markerBorderBits", 
+                detector->markerBorderBits);
+            _readIfExist(configurationFile, "maxErroneousBitsInBorderRate", 
+                detector->maxErroneousBitsInBorderRate);
+            _readIfExist(configurationFile, "maxMarkerPerimeterRate", 
+                detector->maxMarkerPerimeterRate);
+            _readIfExist(configurationFile, "minCornerDistanceRate", 
+                detector->minCornerDistanceRate);
+            _readIfExist(configurationFile, "minDistanceToBorder", 
+                detector->minDistanceToBorder);
+            _readIfExist(configurationFile, "minMarkerDistanceRate", 
+                detector->minMarkerDistanceRate);
+            _readIfExist(configurationFile, "minMarkerPerimeterRate", 
+                detector->minMarkerPerimeterRate);
+            _readIfExist(configurationFile, "minOtsuStdDev", 
+                detector->minOtsuStdDev);
+            _readIfExist(configurationFile, "perspectiveRemoveIgnoredMarginPerCell", 
+                detector->perspectiveRemoveIgnoredMarginPerCell);
+            _readIfExist(configurationFile, "perspectiveRemovePixelPerCell", 
+                detector->perspectiveRemovePixelPerCell);
+            _readIfExist(configurationFile, "polygonalApproxAccuracyRate", 
+                detector->polygonalApproxAccuracyRate);  
         }
         return detector;
     }
