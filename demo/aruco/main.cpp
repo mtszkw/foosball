@@ -51,7 +51,9 @@ int main(int argc, const char *argv[])
     cv::namedWindow("Aruco Demo");
 
     cv::Ptr<cv::aruco::Dictionary> aruco_dict = aruco::createDictionary(aruco_path, 5);
-    cv::Ptr<cv::aruco::DetectorParameters> detector(new cv::aruco::DetectorParameters());
+    cv::Ptr<cv::aruco::DetectorParameters> detector = aruco::loadParametersFromFile("aaaa.yaml");
+
+    std::cout << (detector->adaptiveThreshConstant = 1) << std::endl;
 
     std::vector<aruco::ArucoMarker> found, rejected;
 
@@ -67,7 +69,7 @@ int main(int argc, const char *argv[])
         aruco::drawMarkersOnFrame(frame, rejected);
 
         cv::imshow("Aruco Demo", frame);
-        if (cv::waitKey(30) >= 0) 
+        if (cv::waitKey(10) >= 0) 
             break;
     }
 }

@@ -1,5 +1,4 @@
-#ifndef ARUCO_H_
-#define ARUCO_H_
+#pragma once
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
@@ -28,10 +27,10 @@ namespace aruco {
     };
 
     cv::Ptr<cv::aruco::Dictionary> createDictionary(std::string path, int correction);
+    cv::Ptr<cv::aruco::DetectorParameters> loadParametersFromFile(std::string path = "");
+
     void detectArucoOnFrame(cv::Mat &frame, cv::Ptr<cv::aruco::Dictionary> arucoDictionary,
         std::vector<ArucoMarker> &found, std::vector<ArucoMarker> &rejected,
         cv::Ptr<cv::aruco::DetectorParameters> detectorParameters);
     void drawMarkersOnFrame(cv::Mat &frame, const std::vector<ArucoMarker> &markers);
 }
-
-#endif
