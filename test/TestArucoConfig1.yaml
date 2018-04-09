@@ -1,0 +1,10 @@
+%YAML:1.0
+---
+adaptiveThreshConstant: 8.
+adaptiveThreshWinSizeMax: 21.
+adaptiveThreshWinSizeMin: "ABC"
+adaptiveThreshWinSizeStep: 10
+perspectiveRemoveIgnoredMarginPerCell: 1
+perspectiveRemovePixelPerCell: 4
+minMarkerPerimeterRate: 2.9999999999999999e-02
+polygonalApproxAccuracyRate: 2.
