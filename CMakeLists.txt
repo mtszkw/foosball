@@ -30,6 +30,12 @@ add_test (NAME Test1 COMMAND Test
     --color_output=yes
 )
 
+if(CMAKE_COMPILER_IS_GNUCC)
+    target_link_libraries(ImplementacjePrzemyslowe stdc++fs)
+    target_link_libraries(Test stdc++fs)
+    #set_target_properties(ImplementacjePrzemyslowe PROPERTIES LINK_FLAGS "-stdc++fs")
+endif()
+
 include(fastbuild.cmake)
 
 generate_fast_build(ImplementacjePrzemyslowe)

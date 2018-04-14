@@ -6,6 +6,22 @@ function(addPrefixes listVar prefix out)
   set(${out} ${ret} PARENT_SCOPE)
 endfunction()
 
+function(get_libraries out target)
+  get_target_property(libs ${TARGET} LINK_LIBRARIES)
+  #DBG(libs)
+  set(ret)
+  foreach(lib ${libs})
+    if(TARGET ${lib})
+      get_target_property(path ${lib} LOCATION)
+      #message("${lib}: ${path}")
+      list(APPEND ret " ${path}")
+    else()
+      list(APPEND ret " -l${lib}")
+    endif()
+  endforeach()
+  set(${out} ${ret} PARENT_SCOPE)
+endfunction()
+
 function(addSuffixes listVar suffix out)
   set(ret)
   foreach(i ${listVar})
@@ -34,37 +50,65 @@ function(DBG VAR)
   message("${VAR}: ${${VAR}}")
 endfunction()
 
+function(find_lib out name direcories)
+  foreach(i ${direcories})
+    FILE(GLOB ret "${i}/${name}*.lib")
+    #DBG(ret)
+    if(ret)
+      break()
+    endif()
+    FILE(GLOB ret "${i}/lib${name}*.a")
+    #DBG(ret)
+    if(ret)
+      break()
+    endif()
+  endforeach()
+  set(${out} ${ret} PARENT_SCOPE)
+endfunction()
+
+function(get_dlls target)
+  get_target_property(libs ${TARGET} LINK_LIBRARIES)
+  foreach(lib ${libs})
+   if(TARGET ${lib})
+     # If this is a library, get its transitive dependencies
+     get_target_property(trans ${lib} INTERFACE_LINK_LIBRARIES)
+     foreach(tran ${trans})
+       if(TARGET ${tran})
+         get_target_property(path ${tran} LOCATION)
+         file(APPEND "$libs.txt" "${path}\n")
+       endif()
+     endforeach()
+     get_target_property(path ${lib} LOCATION)
+     file(APPEND "libs.txt" "${path}\n")
+    else()
+     file(APPEND "libs.txt" "${lib}\n")
+    endif()
+  endforeach()
+endfunction()
+
 function(generate_fast_build TARGET)
-  get_target_property(TYPE ${TARGET} TYPE) #exe / sharedlib itp
+  get_target_property(TYPE ${TARGET} TYPE)
   DBG(TYPE)
-  get_target_property(LINKER_LANGUAGE ${TARGET} LINKER_LANGUAGE)
-  DBG(LINKER_LANGUAGE)
-  get_target_property(ARCHIVE_OUTPUT_DIRECTORY_CONFIG ${TARGET} ARCHIVE_OUTPUT_DIRECTORY_RELEASE)
-  DBG(ARCHIVE_OUTPUT_DIRECTORY_CONFIG)
   get_target_property(COMPILE_OPTIONS ${TARGET} COMPILE_OPTIONS)
   DBG(COMPILE_OPTIONS)
-  get_target_property(LINK_FLAGS_RELEASE ${TARGET} LINK_FLAGS_RELEASE)
-  DBG(LINK_FLAGS_RELEASE)
-  get_target_property(SOURCES ${TARGET} SOURCES)
-  DBG(SOURCES)
-  get_target_property(INTERFACE_COMPILE_OPTIONS ${TARGET} INTERFACE_COMPILE_OPTIONS)
-  DBG(INTERFACE_COMPILE_OPTIONS)
-  get_target_property(INCLUDE_DIRECTORIES ${TARGET} INCLUDE_DIRECTORIES)
-  DBG(INCLUDE_DIRECTORIES)
-  get_target_property(LINK_LIBRARIES ${TARGET} LINK_LIBRARIES)
-  DBG(LINK_LIBRARIES)
-  get_target_property(RESOURCE ${TARGET} RESOURCE)
-  DBG(RESOURCE)
+  get_target_property(INCLUDE_DIRECTORIES  ${TARGET} INCLUDE_DIRECTORIES)
+  #DBG(INCLUDE_DIRECTORIES)
+  get_target_property(LINK_FLAGS  ${TARGET} LINK_FLAGS)
+  DBG(LINK_FLAGS)
   
-  set(IncludeDirs ${OpenCV_INCLUDE_DIRS})
-  list(APPEND IncludeDirs "./include/")
-  addPrefixes("${IncludeDirs}" " -I" IncludeDirs)
-  string(REPLACE ";" "" IncludeDirs "${IncludeDirs}")
-  addPrefixes("${OpenCV_LIBS}" " -l" IncludeLibs)
-  addSuffixes("${IncludeLibs}" "341" IncludeLibs)
-  string(REPLACE ";" "" IncludeLibs "${IncludeLibs}")
-  set(libsPath " -L${OpenCV_INSTALL_PATH}/lib")
+  #set(IncludeDirs ${OpenCV_INCLUDE_DIRS})
+  #list(APPEND IncludeDirs "./include/")
+  addPrefixes("${INCLUDE_DIRECTORIES}" " -I" INCLUDE_DIRECTORIES)
+  string(REPLACE ";" " " INCLUDE_DIRECTORIES "${INCLUDE_DIRECTORIES}")
+  get_libraries(IncludeLibs target)
+  #DBG(IncludeLibs)
+  #DBG(IncludeLibs)
+  #addPrefixes("${IncludeLibs}" " " IncludeLibs)
+  #addSuffixes("${IncludeLibs}" "341" IncludeLibs)
+  string(REPLACE ";" " " IncludeLibs "${IncludeLibs}")
+  #set(libsPath " -L${OpenCV_INSTALL_PATH}/lib")
   toFastbuildArray("${SRC}" fba)
+  
 
 
   file(WRITE fbuild.bff
@@ -72,13 +116,12 @@ function(generate_fast_build TARGET)
   .CompilerOptions = '\"%1\"' 
   + ' -c' 
   + ' -o\"%2\"'
-  + \"${IncludeDirs}${IncludeLibs}${libsPath}\"\n
-  + ' -lstdc++fs'
+  + \"${INCLUDE_DIRECTORIES}\"\n
   .Linker = '${CMAKE_CXX_COMPILER}' \n
   .LinkerOptions = ' \"%1\"' 
   + ' -o\"%2\"' 
-  + \"${IncludeDirs}${IncludeLibs}${libsPath}\"\n
-  + ' -lstdc++fs'
+  + \"${INCLUDE_DIRECTORIES}\"
+  + \"${IncludeLibs}\"\n
   ObjectList( '${PROJECT_NAME}-Lib' ) {
     .CompilerInputFiles = ${fba}
     .CompilerOutputPath = '/out/' 
