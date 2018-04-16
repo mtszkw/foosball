@@ -43,3 +43,8 @@ cmake_install.cmake
 ImplementacjePrzemyslowe
 fbuild.fdb
 fbuild.bff
+
+#VS2017
+.vs/
+CMakeSettings.json
+CppProperties.json

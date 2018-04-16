@@ -15,7 +15,11 @@ add_executable(ImplementacjePrzemyslowe ${SRC})
 target_link_libraries(ImplementacjePrzemyslowe ${OpenCV_LIBS})
 target_include_directories(ImplementacjePrzemyslowe PRIVATE "./include/")
 
-set(SOURCE_TEST_FILES test/TestCase.cpp)
+set(SOURCE_TEST_FILES 
+    test/TestCase.cpp
+    test/TestAruco.cpp
+    src/aruco.cpp
+    )
 
 add_executable (Test ${SOURCE_TEST_FILES})
 

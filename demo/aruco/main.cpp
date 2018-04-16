@@ -6,6 +6,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
 
+#include "aruco.hpp"
 #include "cxxopts.hpp"
 
 cxxopts::ParseResult parseConfiguration(cxxopts::Options &options, int argc, const char *argv[])
@@ -32,10 +33,12 @@ int main(int argc, const char *argv[])
     cxxopts::Options options(argv[0], "Implementacje Przemyslowe");
     options.add_options("")
         ("h,help", "Display help")
-        ("i,input_path", "Input video file path", cxxopts::value<std::string>());
+        ("i,input_path", "Input video file path", cxxopts::value<std::string>())
+        ("d,aruco_path", "Path to aruco dictionary", cxxopts::value<std::string>());
 
     const auto config = parseConfiguration(options, argc, argv);
     const std::string input_path = config["input_path"].as<std::string>();
+    const std::string aruco_path = config["aruco_path"].as<std::string>();
 
     if (!std::experimental::filesystem::exists(input_path))
     {
@@ -43,14 +46,31 @@ int main(int argc, const char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    cv::Mat image = cv::imread(input_path, 1);
-    if (!image.data)
-    {
-        std::cerr << "No image data.\n";
-        exit(EXIT_FAILURE);
-    }
+    cv::Mat frame;
+    cv::VideoCapture capture(input_path);
+    cv::namedWindow("Aruco Demo");
 
-    cv::namedWindow("Display Image", cv::WINDOW_AUTOSIZE);
-    cv::imshow("Display Image", image);
-    cv::waitKey(0);
+    cv::Ptr<cv::aruco::Dictionary> aruco_dict = aruco::createDictionary(aruco_path, 5);
+    cv::Ptr<cv::aruco::DetectorParameters> detector = aruco::loadParametersFromFile("aaaa.yaml");
+
+    std::cout << (detector->adaptiveThreshConstant = 1) << std::endl;
+
+    std::vector<aruco::ArucoMarker> found, rejected;
+
+    while (1) {
+        capture >> frame;
+        if (frame.empty())
+            break;
+
+        //cv::aruco::drawMarker(aruco_dict, 3, 250, frame);
+
+        aruco::detectArucoOnFrame(frame, aruco_dict, found, rejected, detector);
+        aruco::drawMarkersOnFrame(frame, found);
+        aruco::drawMarkersOnFrame(frame, rejected);
+
+        cv::imshow("Aruco Demo", frame);
+        if (cv::waitKey(10) >= 0) 
+            break;
+    }
 }
+
