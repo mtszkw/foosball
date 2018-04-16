@@ -212,7 +212,6 @@ bool CameraCalibration::init()
     }
 
     vector<vector<Point2f>> imagePoints;
-    Mat cameraMatrix, distCoeffs;
     Size imageSize;
     int mode = s.inputType == Settings::IMAGE_LIST ? CAPTURING : DETECTION;
     clock_t prevTimestamp = 0;
@@ -644,3 +643,14 @@ bool CameraCalibration::runCalibrationAndSave(Settings& s, Size imageSize, Mat& 
     return ok;
 }
 //! [run_and_save]
+
+Mat CameraCalibration::getUndistortedImage(Mat distortedImage,bool useFishEye)
+{
+	Mat view;
+	if (useFishEye)
+		cv::fisheye::undistortImage(distortedImage, view, cameraMatrix, distCoeffs);
+	else
+		undistort(distortedImage, view, cameraMatrix, distCoeffs);
+	return view;
+}
+

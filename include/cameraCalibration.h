@@ -64,10 +64,13 @@ namespace calibration {
 	class CameraCalibration
 	{
 	private:
+		Mat cameraMatrix;
+		Mat distCoeffs;
 		std::string inputSettingsFile = "default.xml";
 		enum { DETECTION = 0, CAPTURING = 1, CALIBRATED = 2 };
 		bool runCalibrationAndSave(Settings& s, cv::Size imageSize, cv::Mat&  cameraMatrix, 
 			cv::Mat& distCoeffs, std::vector<std::vector<cv::Point2f>> imagePoints);
+		cv::Mat getUndistortedImage(cv::Mat distortedImage, bool useFishEye);
 		static double computeReprojectionErrors(const std::vector<std::vector<cv::Point3f> >& objectPoints,
 			const std::vector<std::vector<cv::Point2f> >& imagePoints,
 			const std::vector<cv::Mat>& rvecs, const std::vector<cv::Mat>& tvecs,
@@ -85,6 +88,7 @@ namespace calibration {
 			const std::vector<std::vector<cv::Point2f> >& imagePoints, double totalAvgErr);
 	public:
 		static void help();
+		Mat getUndistortedImage(Mat distortedImage, bool useFishEye);
 		CameraCalibration(std::string inputSettingsFile)
 		{
 			this->inputSettingsFile = inputSettingsFile;
