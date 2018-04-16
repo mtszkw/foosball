@@ -33,7 +33,8 @@ endfunction()
 function(toFastbuildArray listVar out)
   list(GET listVar 0 elem)
   set(ret "{\"${elem}\"")
-  list(LENGTH L1 size)
+  list(LENGTH listVar size)
+  DBG(size)
   math(EXPR size "${size}-1")
   if(${size} GREATER 0)
     foreach(i RANGE 1 ${size})
@@ -86,7 +87,7 @@ function(get_dlls target)
   endforeach()
 endfunction()
 
-function(generate_fast_build TARGET)
+function(add_fastbuild_target TARGET)
   get_target_property(TYPE ${TARGET} TYPE)
   DBG(TYPE)
   get_target_property(COMPILE_OPTIONS ${TARGET} COMPILE_OPTIONS)
@@ -95,6 +96,13 @@ function(generate_fast_build TARGET)
   #DBG(INCLUDE_DIRECTORIES)
   get_target_property(LINK_FLAGS  ${TARGET} LINK_FLAGS)
   DBG(LINK_FLAGS)
+  get_target_property(OUTPUT_NAME   ${TARGET} OUTPUT_NAME )
+  DBG(OUTPUT_NAME)
+  get_target_property(LIBRARY_OUTPUT_DIRECTORY ${TARGET} LIBRARY_OUTPUT_DIRECTORY )
+  DBG(LIBRARY_OUTPUT_DIRECTORY)
+  get_target_property(NAME ${TARGET} NAME )
+  DBG(NAME)
+  DBG(CMAKE_LINKER)
   
   #set(IncludeDirs ${OpenCV_INCLUDE_DIRS})
   #list(APPEND IncludeDirs "./include/")
@@ -111,28 +119,58 @@ function(generate_fast_build TARGET)
   
 
 
-  file(WRITE fbuild.bff
-  ".Compiler = '${CMAKE_CXX_COMPILER}' \n
-  .CompilerOptions = '\"%1\"' 
+  file(APPEND fbuild.bff
+"
+ObjectList( '${NAME}-Lib' ) {
+  .CompilerInputFiles = ${fba}
+  .CompilerOutputPath = '/out/' 
+  .CompilerOptions = '%1' 
   + ' -c' 
-  + ' -o\"%2\"'
-  + \"${INCLUDE_DIRECTORIES}\"\n
-  .Linker = '${CMAKE_CXX_COMPILER}' \n
-  .LinkerOptions = ' \"%1\"' 
-  + ' -o\"%2\"' 
-  + \"${INCLUDE_DIRECTORIES}\"
-  + \"${IncludeLibs}\"\n
-  ObjectList( '${PROJECT_NAME}-Lib' ) {
-    .CompilerInputFiles = ${fba}
-    .CompilerOutputPath = '/out/' 
-  } 
-  Executable( '${PROJECT_NAME}' ) { 
-    .Libraries = { \"${PROJECT_NAME}-Lib\" } 
-    .LinkerOutput = '/out/${PROJECT_NAME}.exe' 
-  }
-  Alias( 'all' ) { 
-    .Targets = { '${PROJECT_NAME}' }
-  }\n"
+  + ' -o \"%2\" '
+  + '${INCLUDE_DIRECTORIES}'
+} 
+Executable( '${NAME}' ) { 
+  .Libraries = { '${NAME}-Lib' } 
+  .LinkerOutput = '/out/${NAME}.exe'
+  .LinkerOptions = '%1' 
+  + ' -o \"%2\"' 
+  + '${INCLUDE_DIRECTORIES}'
+  + '${IncludeLibs}'
+}
+"
+)
+
+endfunction()
+
+function(init_fastbuild)
+  file(WRITE fbuild.bff
+".Compiler = '${CMAKE_CXX_COMPILER}'
+.Linker = '${CMAKE_CXX_COMPILER}'
+"
   )
 endfunction()
 
+function(alias_all_fastbuild TARGETS)
+  DBG(TARGETS)
+  set(ret)
+  foreach(i ${TARGETS})
+    get_target_property(NAME ${i} NAME )
+    list(APPEND ret ${NAME})
+  endforeach()
+  DBG(ret)
+  toFastbuildArray("${ret}" ret)
+  file(APPEND fbuild.bff
+"Alias( 'all' ) { 
+  .Targets = ${ret}
+}
+"
+  )
+endfunction()
+
+function(generate_fastbuild TARGETS)
+  init_fastbuild()
+  foreach(i ${TARGETS})
+    add_fastbuild_target(${i})
+  endforeach()
+  alias_all_fastbuild("${TARGETS}")
+endfunction()

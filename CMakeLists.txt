@@ -37,5 +37,4 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif()
 
 include(fastbuild.cmake)
-
-generate_fast_build(ImplementacjePrzemyslowe)
+generate_fastbuild("ImplementacjePrzemyslowe;Test")
