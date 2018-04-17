@@ -77,7 +77,7 @@ namespace calibration {
 			const std::vector<float>& reprojErrs, 
 			const std::vector<std::vector<cv::Point2f> >& imagePoints, double totalAvgErr);
 	public:
-		static void help(std::ostream &os);
+		static void help(std::ostream &os = std::cout);
 		CameraCalibration(std::string const &inputSettingsFile) : inputSettingsFile(inputSettingsFile){}
 		CameraCalibration(std::string &&inputSettingsFile) : inputSettingsFile(std::move(inputSettingsFile)){}
 		CameraCalibration() {};

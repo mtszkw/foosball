@@ -146,9 +146,9 @@ void Settings::validate()
     }
 
     calibrationPattern = Pattern::NOT_EXISTING;
-    if (!patternToUse.compare("Pattern::CHESSBOARD")) calibrationPattern = Pattern::CHESSBOARD;
+    if (!patternToUse.compare("CHESSBOARD")) calibrationPattern = Pattern::CHESSBOARD;
     else if (!patternToUse.compare("CIRCLES_GRID")) calibrationPattern = Pattern::CIRCLES_GRID;
-    else if (!patternToUse.compare("Pattern::ASYMMETRIC_CIRCLES_GRID")) calibrationPattern = Pattern::ASYMMETRIC_CIRCLES_GRID;
+    else if (!patternToUse.compare("ASYMMETRIC_CIRCLES_GRID")) calibrationPattern = Pattern::ASYMMETRIC_CIRCLES_GRID;
     else if (calibrationPattern == Pattern::NOT_EXISTING)
     {
         std::cerr << " Camera calibration mode does not exist: " << patternToUse << std::endl;
@@ -193,7 +193,7 @@ bool Settings::isListOfImages(const std::string& filename)
             && filename.find(".yml") == std::string::npos);
 }
 
-void calibration::CameraCalibration::help(std::ostream &os = std::cout)
+void calibration::CameraCalibration::help(std::ostream &os)
 {
     os << "This is a camera calibration sample." << std::endl
          << "Usage: camera_calibration [configuration_file -- default ./default.xml]" << std::endl
