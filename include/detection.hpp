@@ -4,16 +4,16 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
-namespace detection 
+namespace detection
 {
-    cv::Mat transformToHSV(cv::Mat* image)
+    cv::Mat transformToHSV(cv::Mat& image)
     {
 	// Convert input image to HSV
 	cv::Mat hsvImage;
-	cv::cvtColor(image[0], hsvImage, cv::COLOR_BGR2HSV);
+	cv::cvtColor(image, hsvImage, cv::COLOR_BGR2HSV);
 	cv::Mat lowerHueRange;
 	cv::Mat upperHueRange;
-	cv::inRange(hsvImage, cv::Scalar(5, 121, 102), cv::Scalar(21, 255, 203), lowerHueRange);  
+	cv::inRange(hsvImage, cv::Scalar(5, 121, 102), cv::Scalar(21, 255, 203), lowerHueRange);
 	cv::inRange(hsvImage, cv::Scalar(5, 121, 102), cv::Scalar(21, 255, 203), upperHueRange);
 
 	// Combine the above two images
@@ -22,26 +22,26 @@ namespace detection
 
 	cv::GaussianBlur(hueImage, hueImage, cv::Size(9, 9), 2, 2);
 	return hueImage;
-	
+
     }
-    
-    
-    void circlesDetection(cv::Mat* hueImage, cv::Mat* image )
+
+
+    void circlesDetection(cv::Mat& hueImage, cv::Mat& image )
     {
 	std::vector<cv::Vec3f> circles;
-	cv::HoughCircles(hueImage[0], circles, CV_HOUGH_GRADIENT, 
-			 1, hueImage[0].rows/8, 100, 20, 0, 0);
-  
+	cv::HoughCircles(hueImage, circles, CV_HOUGH_GRADIENT,
+			 1, hueImage.rows/8, 100, 20, 0, 0);
+
 	// Loop over all detected circles and outline them on the original image
-	for(size_t currentCircle = 0; currentCircle < circles.size(); ++currentCircle) 
+	for(size_t currentCircle = 0; currentCircle < circles.size(); ++currentCircle)
 	{
-	    cv::Point center(std::round(circles[currentCircle][0]), 
+	    cv::Point center(std::round(circles[currentCircle][0]),
 			     std::round(circles[currentCircle][1]));
 	    int radius = std::round(circles[currentCircle][2]);
-	    cv::circle(image[0], center, radius, cv::Scalar(0, 255, 0), 5);
+	    cv::circle(image, center, radius, cv::Scalar(0, 255, 0), 5);
 	}
     }
-    
+
 }
 
 #endif //DETECTION_HPP

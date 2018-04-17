@@ -9,8 +9,8 @@ int main(int argc, char **argv)
     {
 	video >> frame;
 	
-	cv::Mat hueImage = detection::transformToHSV(&frame);
-	detection::circlesDetection(&hueImage, &frame);
+	cv::Mat hueImage = detection::transformToHSV(frame);
+	detection::circlesDetection(hueImage, frame);
 	
 	cv::imshow("Detected circles", frame);
 	
