@@ -7,6 +7,7 @@
 #include <opencv2/aruco.hpp>
 
 #include "aruco.hpp"
+#include "cameraCalibration.h"
 #include "cxxopts.hpp"
 
 cxxopts::ParseResult parseConfiguration(cxxopts::Options &options, int argc, const char *argv[])
@@ -51,16 +52,20 @@ int main(int argc, const char *argv[])
     cv::namedWindow("Aruco Demo");
 
     cv::Ptr<cv::aruco::Dictionary> aruco_dict = aruco::createDictionary(aruco_path, 5);
-    cv::Ptr<cv::aruco::DetectorParameters> detector = aruco::loadParametersFromFile("aaaa.yaml");
+    cv::Ptr<cv::aruco::DetectorParameters> detector = aruco::loadParametersFromFile("../../data/config-aruco.yaml");
 
-    std::cout << (detector->adaptiveThreshConstant = 1) << std::endl;
+    //std::cout << (detector->adaptiveThreshConstant = 1) << std::endl;
 
     std::vector<aruco::ArucoMarker> found, rejected;
+
+    calibration::CameraCalibration camCal("../../data/default.xml", "../../data/out_camera_data.xml");
 
     while (1) {
         capture >> frame;
         if (frame.empty())
             break;
+
+        //frame = camCal.getUndistortedImage(frame);
 
         //cv::aruco::drawMarker(aruco_dict, 3, 250, frame);
 
