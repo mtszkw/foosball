@@ -87,15 +87,13 @@ private:
 	void loadCalibrationFile();
 public:
     static void help();
-    cv::Mat getUndistortedImage(cv::Mat distortedImage, bool useFishEye);
-    CameraCalibration(std::string inputSettingsFile)
-    {
-        this->inputSettingsFile = inputSettingsFile;
-    };
+    cv::Mat getUndistortedImage(cv::Mat distortedImage);
+    CameraCalibration(std::string inputSettingsFile) : inputSettingsFile(inputSettingsFile){};
     CameraCalibration(std::string inputSettingsFile,
                       std::string calibrationFileName) : CameraCalibration(inputSettingsFile)
     {
         this->calibrationFileName = calibrationFileName;
+		loadCalibrationFile();
     };
     CameraCalibration() {};
     bool init();

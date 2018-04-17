@@ -31,7 +31,7 @@
 *.out
 *.app
 
-data/ # ignore data directory
+data/*.mp4 # ignore data directory
 build/
 CMakeFiles
 CMakeCache.txt

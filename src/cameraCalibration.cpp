@@ -648,13 +648,10 @@ bool CameraCalibration::runCalibrationAndSave(Settings& s, cv::Size imageSize,
 }
 //! [run_and_save]
 
-cv::Mat CameraCalibration::getUndistortedImage(cv::Mat distortedImage,bool useFishEye)
+cv::Mat CameraCalibration::getUndistortedImage(cv::Mat distortedImage)
 {
     cv::Mat view;
-    if (useFishEye)
-        cv::fisheye::undistortImage(distortedImage, view, cameraMatrix, distCoeffs);
-    else
-        undistort(distortedImage, view, cameraMatrix, distCoeffs);
+	undistort(distortedImage, view, cameraMatrix, distCoeffs);
     return view;
 }
 
