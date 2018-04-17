@@ -5,20 +5,13 @@
 #include <ctime>
 #include <cstdio>
 
-#include <opencv2/core.hpp>
-#include <opencv2/core/utility.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/calib3d.hpp>
-#include <opencv2/imgcodecs.hpp>
 #include <opencv2/videoio.hpp>
-#include <opencv2/highgui.hpp>
 
-class Settings
-{
+class Settings{
 public:
 	Settings() : goodInput(false) {}
-	enum Pattern { NOT_EXISTING, CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
-	enum InputType { INVALID, CAMERA, VIDEO_FILE, IMAGE_LIST };
+	enum class Pattern { NOT_EXISTING, CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID };
+	enum class InputType { INVALID, CAMERA, VIDEO_FILE, IMAGE_LIST };
 	void write(cv::FileStorage& fs) const;                      //Write serialization for this class
 	void read(const cv::FileNode& node);                        //Read serialization for this class
 	void validate();
@@ -84,21 +77,10 @@ namespace calibration {
 			const std::vector<float>& reprojErrs, 
 			const std::vector<std::vector<cv::Point2f> >& imagePoints, double totalAvgErr);
 	public:
-		static void help();
-		CameraCalibration(std::string inputSettingsFile)
-		{
-			this->inputSettingsFile = inputSettingsFile;
-		};
+		static void help(std::ostream &os);
+		CameraCalibration(std::string const &inputSettingsFile) : inputSettingsFile(inputSettingsFile){}
+		CameraCalibration(std::string &&inputSettingsFile) : inputSettingsFile(std::move(inputSettingsFile)){}
 		CameraCalibration() {};
 		bool init();
 	};
-}
-
-static inline void read(const cv::FileNode& node, Settings& x, 
-	const Settings& default_value = Settings())
-{
-	if (node.empty())
-		x = default_value;
-	else
-		x.read(node);
 }
