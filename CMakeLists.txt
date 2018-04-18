@@ -5,7 +5,7 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 file(GLOB SRC
-    "src/detection.cpp"
+    "src/7.cpp"
 )
 
 set (CMAKE_CXX_STANDARD 17)
