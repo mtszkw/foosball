@@ -7,6 +7,7 @@
 #include <opencv2/aruco.hpp>
 
 #include "aruco.hpp"
+#include "table.hpp"
 #include "cameraCalibration.h"
 #include "cxxopts.hpp"
 
@@ -59,6 +60,7 @@ int main(int argc, const char *argv[])
     std::vector<aruco::ArucoMarker> found, rejected;
 
     calibration::CameraCalibration camCal("../../data/default.xml", "../../data/out_camera_data.xml");
+    table::Table t;
 
     while (1) {
         capture >> frame;
@@ -71,9 +73,13 @@ int main(int argc, const char *argv[])
 
         aruco::detectArucoOnFrame(frame, aruco_dict, found, rejected, detector);
         aruco::drawMarkersOnFrame(frame, found);
-        aruco::drawMarkersOnFrame(frame, rejected);
+
+        t.updateTableOnFrame(found);
+        t.drawTableOnFrame(frame);
+        frame = t.getTableFromFrame(frame);
 
         cv::imshow("Aruco Demo", frame);
+
         if (cv::waitKey(10) >= 0) 
             break;
     }

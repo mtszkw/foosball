@@ -6,6 +6,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 set(SOURCES
     ../../src/aruco.cpp
+    ../../src/table.cpp
     ../../src/cameraCalibration.cpp
     main.cpp
 )
