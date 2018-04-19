@@ -22,7 +22,7 @@ namespace table {
     {
         cv::Mat result;
 
-        cv::warpPerspective(frame, result, transformationMatrix, {900, 500});
+        cv::warpPerspective(frame, result, transformationMatrix, output_size);
 
         return result;
     }

@@ -60,7 +60,7 @@ int main(int argc, const char *argv[])
     std::vector<aruco::ArucoMarker> found, rejected;
 
     calibration::CameraCalibration camCal("../../data/default.xml", "../../data/out_camera_data.xml");
-    table::Table t;
+    table::Table t(1200, 600);
 
     while (1) {
         capture >> frame;

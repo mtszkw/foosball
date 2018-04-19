@@ -13,11 +13,13 @@ namespace table {
             std::vector<cv::Point2f> corners;
             cv::Mat transformationMatrix;
 
-            const cv::Point2f output[4] = {
+            const cv::Point2f output[4];/*= {
                 {900, 0}, {900, 500}, {0, 500}, {0, 0}
-            };
+            };*/
+            const cv::Size output_size;
         public:
-            Table() : corners(4) {};
+            Table(int width, int height) : corners(4), output_size({width, height}),
+                output({{(float)width, 0}, {(float)width, (float)height}, {0, (float)height}, {0, 0}}) {};
             void updateTableOnFrame(const std::vector<aruco::ArucoMarker> &arucoMarkers);
             void drawTableOnFrame(cv::Mat &frame);
             cv::Mat getTableFromFrame(const cv::Mat &frame);
