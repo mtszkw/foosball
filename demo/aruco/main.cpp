@@ -72,10 +72,10 @@ int main(int argc, const char *argv[])
         //cv::aruco::drawMarker(aruco_dict, 3, 250, frame);
 
         aruco::detectArucoOnFrame(frame, aruco_dict, found, rejected, detector);
-        aruco::drawMarkersOnFrame(frame, found);
+        //aruco::drawMarkersOnFrame(frame, found);
 
         t.updateTableOnFrame(found);
-        t.drawTableOnFrame(frame);
+        //t.drawTableOnFrame(frame);
         frame = t.getTableFromFrame(frame);
 
         cv::imshow("Aruco Demo", frame);
