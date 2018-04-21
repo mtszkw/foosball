@@ -43,6 +43,7 @@ namespace table {
         }
 
         if (arucoMarkers.size() == 4)
+            transformationValid = true;
             transformationMatrix = cv::getPerspectiveTransform(corners.data(), output);
     }
 
@@ -58,7 +59,10 @@ namespace table {
     {
         cv::Mat result;
 
-        cv::warpPerspective(frame, result, transformationMatrix, output_size);
+        if (transformationValid)
+            cv::warpPerspective(frame, result, transformationMatrix, output_size);
+        else
+            result = frame;
 
         return result;
     }
