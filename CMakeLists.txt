@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.9.0)
 project(ImplementacjePrzemyslowe)
 
+# Including custom cmake rules
+include(cmake/clang-cxx-dev-tools.cmake)
+
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
