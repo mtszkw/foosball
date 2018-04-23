@@ -6,22 +6,30 @@
 
 #include "aruco.hpp"
 
-namespace table {
+namespace table
+{
     class Table 
     {
-        private:
-            std::vector<cv::Point2f> corners;
-            cv::Mat transformationMatrix;
-            bool transformationValid;
+    private:
+        std::vector<cv::Point2f> corners;
+        cv::Mat transformationMatrix;
+        bool transformationValid;
 
-            const cv::Point2f output[4];
-            const cv::Size output_size;
-        public:
-            Table(int width, int height) : corners(4), output_size({width, height}),
-                output({{(float)width, 0}, {(float)width, (float)height}, {0, (float)height}, {0, 0}}),
-                transformationValid(false) {};
-            void updateTableOnFrame(const std::vector<aruco::ArucoMarker> &arucoMarkers);
-            void drawTableOnFrame(cv::Mat &frame);
-            cv::Mat getTableFromFrame(const cv::Mat &frame);
+        cv::Point2f output[4];
+        const cv::Size output_size;
+
+    public:
+        Table(int width, int height)
+            : corners(4), output_size({width, height}), transformationValid(false)
+        {
+            output[0] = { (float)width, 0 };
+            output[1] = { (float)width, (float)height };
+            output[2] = { 0, (float)height };
+            output[3] = { 0, 0 };
+        }
+
+        void updateTableOnFrame(const std::vector<aruco::ArucoMarker> &arucoMarkers);
+        void drawTableOnFrame(cv::Mat &frame);
+        cv::Mat getTableFromFrame(const cv::Mat &frame);
     };
 }
