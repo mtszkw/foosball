@@ -10,7 +10,7 @@ find_program(CLANG_FORMAT "clang-format")
 if(CLANG_FORMAT)
   add_custom_target(
     clang-format
-    COMMAND /usr/bin/clang-format
+    COMMAND clang-format
     -i
     -style=file
     ${ALL_CXX_SOURCE_FILES}
@@ -22,7 +22,7 @@ find_program(CLANG_TIDY "clang-tidy")
 if(CLANG_TIDY)
   add_custom_target(
     clang-tidy
-    COMMAND /usr/bin/clang-tidy
+    COMMAND clang-tidy
     ${ALL_CXX_SOURCE_FILES}
     -config=''
     --
