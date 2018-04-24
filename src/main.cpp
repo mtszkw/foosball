@@ -10,6 +10,7 @@
 #include "aruco.hpp"
 #include "table.hpp"
 #include "cameraCalibration.h"
+#include "detection.hpp"
 
 int main(int argc, const char *argv[])
 {
@@ -46,8 +47,6 @@ int main(int argc, const char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////
-
     cv::Mat frame;
     cv::VideoCapture capture(INPUT_PATH);
 
@@ -58,9 +57,15 @@ int main(int argc, const char *argv[])
 
     calibration::CameraCalibration cameraCalibration("data/default.xml", CALIB_PATH);
     table::Table gameTable(1200, 600); // Default table size
+   
+    detection::FoundBallsState foundBallsState(0.0, false, 0);
 
-    while (1)
-    {
+    while (1) {
+        double precTick = foundBallsState.getTicks();
+        foundBallsState.setTicks((double) cv::getTickCount());
+
+        double dT = (foundBallsState.getTicks() - precTick) / cv::getTickFrequency(); 
+
         capture >> frame;
         if (frame.empty()) break;
 
@@ -70,7 +75,24 @@ int main(int argc, const char *argv[])
         gameTable.updateTableOnFrame(found);
         frame = gameTable.getTableFromFrame(frame);
 
-        cv::imshow("Implementacje Przemyslowe", frame);
+        cv::Mat restul;
+        frame.copyTo(restul);
+
+        if (foundBallsState.getFoundball())
+        {
+            foundBallsState.detectedBalls(restul, dT);
+        }
+
+        cv::Mat rangeRes = detection::transformToHSV(frame);
+        foundBallsState.contoursFiltering(rangeRes);
+        foundBallsState.detectedBallsResult(restul);
+        
+        foundBallsState.updateFilter();
+
+        cv::imshow("Implementacje Przemyslowe", restul);
+
+        foundBallsState.clearVectors();
+
         if (cv::waitKey(10) >= 0) break;
 
         const int SKIP_FRAMES = 5;
