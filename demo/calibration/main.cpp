@@ -60,7 +60,7 @@ int main(int argc, const char *argv[])
     }
     else
     {
-        if(image_list_path.empty())
+        if(!image_list_path.empty())
         {
             calibration::CameraCalibration cameraCalibration(input_path, calibration_path);
             namedWindow("DistortedImage", cv::WINDOW_NORMAL);
