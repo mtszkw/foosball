@@ -5,7 +5,7 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 set(SOURCES
-    detection.cpp
+    detection_demo.cpp
 )
 
 set (CMAKE_CXX_STANDARD 17)
