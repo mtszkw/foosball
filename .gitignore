@@ -30,3 +30,18 @@
 *.exe
 *.out
 *.app
+
+data/*.mp4 # ignore data directory
+build/
+CMakeFiles
+CMakeCache.txt
+
+Makefile
+cmake_install.cmake
+
+ImplementacjePrzemyslowe
+
+#VS2017
+.vs/
+CMakeSettings.json
+CppProperties.json
