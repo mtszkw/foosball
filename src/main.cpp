@@ -22,7 +22,7 @@ int main(int argc, const char *argv[])
         ("aruco_path", "Aruco dictionary configuration",
             cxxopts::value<std::string>()->default_value("data/dictionary.png"))
         ("calibration", "Calibration config file",
-            cxxopts::value<std::string>()->default_value("data/out_camera_data.xml"))
+            cxxopts::value<std::string>()->default_value("")) // for example: data/out_camera_data_240_fps.xml
         ("aruco_conf", "Configuration of aruco detector",
             cxxopts::value<std::string>()->default_value(""));
 
@@ -54,8 +54,10 @@ int main(int argc, const char *argv[])
     cv::Ptr<cv::aruco::DetectorParameters> detector = aruco::loadParametersFromFile(ARUCO_CFG_PATH);
 
     std::vector<aruco::ArucoMarker> found, rejected;
-
+	
     calibration::CameraCalibration cameraCalibration("data/default.xml", CALIB_PATH);
+    if (CALIB_PATH.empty())
+        cameraCalibration.init(); // initalize calibration if user doesnt provide calibration path
     table::Table gameTable(1200, 600); // Default table size
    
     detection::FoundBallsState foundBallsState(0.0, false, 0);
