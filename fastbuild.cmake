@@ -1,3 +1,5 @@
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 function(addPrefixes listVar prefix out)
   set(ret)
   foreach(i ${listVar})
@@ -87,9 +89,9 @@ function(get_dlls target)
   endforeach()
 endfunction()
 
-function(add_fastbuild_target TARGET)
+function(add_fastbuild_target out TARGET)
   get_target_property(TYPE ${TARGET} TYPE)
-  #DBG(TYPE)
+  DBG(TYPE)
   get_target_property(COMPILE_OPTIONS ${TARGET} COMPILE_OPTIONS)
   #DBG(COMPILE_OPTIONS)
   get_target_property(INCLUDE_DIRECTORIES  ${TARGET} INCLUDE_DIRECTORIES)
@@ -104,7 +106,14 @@ function(add_fastbuild_target TARGET)
   #DBG(NAME)
   get_target_property(SOURCES ${TARGET} SOURCES)
   #DBG(SOURCES)
+  get_target_property(COMPILE_FLAGS ${TARGET} COMPILE_FLAGS)
+  DBG(COMPILE_FLAGS)
   #DBG(CMAKE_LINKER)
+  DBG(CMAKE_CXX_FLAGS)
+  list(GET SOURCES 0 elem)
+  DBG(elem)
+  get_source_file_property(RESULT ${elem} COMPILE_FLAGS)
+  DBG(RESULT)
   
   addPrefixes("${INCLUDE_DIRECTORIES}" " -I" INCLUDE_DIRECTORIES)
   string(REPLACE ";" " " INCLUDE_DIRECTORIES "${INCLUDE_DIRECTORIES}")
@@ -115,8 +124,7 @@ function(add_fastbuild_target TARGET)
   
 
 
-  file(APPEND fbuild.bff
-"
+  set(ret "
 ObjectList( '${NAME}-Lib' ) {
   .CompilerInputFiles = ${fba}
   .CompilerOutputPath = '/out/' 
@@ -124,29 +132,29 @@ ObjectList( '${NAME}-Lib' ) {
   + ' -c' 
   + ' -o \"%2\" '
   + '${INCLUDE_DIRECTORIES}'
-} 
-Executable( '${NAME}' ) { 
+}")
+  if(TYPE STREQUAL "EXECUTABLE")
+  set(ret "${ret} 
+Executable( '${NAME}' ) {
   .Libraries = { '${NAME}-Lib' } 
-  .LinkerOutput = '/out/${NAME}.exe'
+  .LinkerOutput = '$<TARGET_FILE:${TARGET}>'
   .LinkerOptions = '%1' 
   + ' -o \"%2\"' 
   + '${INCLUDE_DIRECTORIES}'
   + '${IncludeLibs}'
 }
 "
-)
-
-endfunction()
-
-function(init_fastbuild)
-  file(WRITE fbuild.bff
-".Compiler = '${CMAKE_CXX_COMPILER}'
-.Linker = '${CMAKE_CXX_COMPILER}'
-"
   )
+  endif()
+  set(${out} "${${out}}${ret}" PARENT_SCOPE)
 endfunction()
 
-function(alias_all_fastbuild TARGETS)
+function(init_fastbuild out)
+  set(ret ".Compiler = '${CMAKE_CXX_COMPILER}'\n.Linker = '${CMAKE_CXX_COMPILER}'\n")
+  set(${out} "${ret}" PARENT_SCOPE)
+endfunction()
+
+function(alias_all_fastbuild out TARGETS)
   #DBG(TARGETS)
   set(ret)
   foreach(i ${TARGETS})
@@ -155,18 +163,16 @@ function(alias_all_fastbuild TARGETS)
   endforeach()
   #DBG(ret)
   toFastbuildArray("${ret}" ret)
-  file(APPEND fbuild.bff
-"Alias( 'all' ) { 
-  .Targets = ${ret}
-}
-"
-  )
+  set(ret "\nAlias( 'all' ) {\n  .Targets = ${ret}\n}")
+  set(${out} "${${out}}${ret}" PARENT_SCOPE)
 endfunction()
 
 function(generate_fastbuild TARGETS)
-  init_fastbuild()
+  set(fastbuildfile "")
+  init_fastbuild(fastbuildfile)
   foreach(i ${TARGETS})
-    add_fastbuild_target(${i})
+    add_fastbuild_target(fastbuildfile ${i})
   endforeach()
-  alias_all_fastbuild("${TARGETS}")
+  alias_all_fastbuild(fastbuildfile "${TARGETS}")
+  file(GENERATE OUTPUT fbuild.bff CONTENT ${fastbuildfile})
 endfunction()
