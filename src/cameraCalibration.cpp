@@ -52,7 +52,7 @@ void Settings::read(const cv::FileNode& node)  //Read serialization for this cla
     node["Fix_K3"] >> fixK3;
     node["Fix_K4"] >> fixK4;
     node["Fix_K5"] >> fixK5;
-	skip += 1;
+    skip += 1;
     validate();
 }
 void Settings::validate()

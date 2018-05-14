@@ -23,8 +23,8 @@ int main(int argc, const char *argv[])
             cxxopts::value<std::string>()->default_value("data/dictionary.png"))
         ("calibration", "Calibration config file",
             cxxopts::value<std::string>()->default_value("")) // for example: data/out_camera_data_240_fps.xml
-		("calibration_conf", "Calibration init config file",
-				cxxopts::value<std::string>()->default_value("data/default.xml")) // for example: data/default.xml
+        ("calibration_conf", "Calibration init config file",
+            cxxopts::value<std::string>()->default_value("data/default.xml")) // for example: data/default.xml
         ("aruco_conf", "Configuration of aruco detector",
             cxxopts::value<std::string>()->default_value(""));
 
@@ -42,7 +42,7 @@ int main(int argc, const char *argv[])
         ARUCO_PATH      = config["aruco_path"].as<std::string>();
         CALIB_PATH      = config["calibration"].as<std::string>();
         ARUCO_CFG_PATH  = config["aruco_conf"].as<std::string>();
-		CALIBRATION_CFG_PATH = config["calibration_conf"].as<std::string>();
+        CALIBRATION_CFG_PATH = config["calibration_conf"].as<std::string>();
 
     }
     catch (const cxxopts::OptionException& ex)

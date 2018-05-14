@@ -93,9 +93,10 @@ public:
     CameraCalibration(std::string inputSettingsFile,
                       std::string calibrationFileName) : CameraCalibration(inputSettingsFile)
     {
-        this->calibrationFileName = calibrationFileName;
-		if(!calibrationFileName.empty())
-		loadCalibrationFile();
+	this->calibrationFileName = calibrationFileName;
+        if(!calibrationFileName.empty()) {
+            loadCalibrationFile();
+	}
     };
     CameraCalibration() {};
     bool init();
