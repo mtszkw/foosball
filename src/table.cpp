@@ -5,7 +5,7 @@ namespace table {
     static double euclideanDistance2(const cv::Point2f &a, const cv::Point2f &b) 
     {
         cv::Point2f r = a - b;
-        return r.x*r.x + r.y*r.y;    
+        return r.dot(r);
     }
 
 
@@ -43,9 +43,10 @@ namespace table {
             corners[markerId] = marker.getCorners()[bestCornerId];
         }
 
-        if (arucoMarkers.size() == 4)
+        if (arucoMarkers.size() == 4) {
             transformationValid = true;
             transformationMatrix = cv::getPerspectiveTransform(corners.data(), output);
+        }
     }
 
     void Table::drawTableOnFrame(cv::Mat &frame) 
