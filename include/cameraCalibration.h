@@ -29,6 +29,7 @@ public:
     int nrFrames;                // The number of frames to use from the input for calibration
     float aspectRatio;           // The aspect ratio
     int delay;                   // In case of a video input
+    int skip;                    // Frames to be skipped
     bool writePoints;            // Write detected feature points
     bool writeExtrinsics;        // Write extrinsic parameters
     bool calibZeroTangentDist;   // Assume zero tangential distortion
@@ -93,6 +94,7 @@ public:
                       std::string calibrationFileName) : CameraCalibration(inputSettingsFile)
     {
         this->calibrationFileName = calibrationFileName;
+		if(!calibrationFileName.empty())
 		loadCalibrationFile();
     };
     CameraCalibration() {};

@@ -24,6 +24,7 @@ const                        //Write serialization for this class
 
        << "Input_FlipAroundHorizontalAxis" << flipVertical
        << "Input_Delay" << delay
+       << "Input_Skip" << skip + 1
        << "Input" << input
        << "}";
 }
@@ -44,13 +45,14 @@ void Settings::read(const cv::FileNode& node)  //Read serialization for this cla
     node["Input_FlipAroundHorizontalAxis"] >> flipVertical;
     node["Show_UndistortedImage"] >> showUndistorsed;
     node["Input"] >> input;
+    node["Input_Skip"] >> skip;
     node["Input_Delay"] >> delay;
     node["Fix_K1"] >> fixK1;
     node["Fix_K2"] >> fixK2;
     node["Fix_K3"] >> fixK3;
     node["Fix_K4"] >> fixK4;
     node["Fix_K5"] >> fixK5;
-
+	skip += 1;
     validate();
 }
 void Settings::validate()
@@ -152,7 +154,7 @@ cv::Mat Settings::nextImage()
         view0.copyTo(result);
     }
     else if (atImageList < imageList.size())
-        result = cv::imread(imageList[atImageList++], cv::IMREAD_COLOR);
+        result = cv::imread(imageList[atImageList+=skip], cv::IMREAD_COLOR); // here we can skip some frames
 
     return result;
 }
@@ -226,7 +228,6 @@ bool CameraCalibration::init()
     {
         cv::Mat view;
         bool blinkOutput = false;
-
         view = s.nextImage();
 
         //-----  If no more image, or got enough, then stop calibration and show result -------------
