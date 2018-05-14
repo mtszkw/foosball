@@ -88,10 +88,15 @@ macro(get_gcc_compile_flags target flags)
 endmacro()
 
 function(add_source_file out SOURCE)
-  get_target_property(HEADER_FILE_ONLY ${SOURCE} HEADER_FILE_ONLY)
+  get_source_file_property(HEADER_FILE_ONLY ${SOURCE} HEADER_FILE_ONLY)
   if(NOT HEADER_FILE_ONLY)
     set(srcflags "")
-    get_source_file_property(value ${SOURCE} LOCATION)
+    get_source_file_property(LOCATION ${SOURCE} LOCATION)
+    set(objectName ${LOCATION})
+    string(REPLACE "/" "-" objectName "${objectName}")
+    string(REPLACE "\\" "-" objectName "${objectName}")
+    string(REPLACE "." "-" objectName "${objectName}")
+    string(REPLACE ":" "" objectName "${objectName}")
     get_source_file_property(value ${SOURCE} COMPILE_DEFINITIONS)
     if (value)
       foreach(item ${value})
@@ -116,7 +121,14 @@ function(add_source_file out SOURCE)
         list(APPEND srcflags "-I${item}")
       endforeach()
     endif()
-    
+    string(REPLACE ";" " " srcflags "${srcflags}")
+    set(ret2 "
+ObjectList( '${objectName}' ) {
+  .CompilerInputFiles = {'${LOCATION}'}
+  .CompilerOutputPath = '/out/' 
+  .CompilerOptions + ' %1 -c -o \"%2\" ${srcflags}'
+}")
+    set(${out} "${${out}}${ret2}" PARENT_SCOPE)
   endif()
 endfunction()
 
@@ -131,37 +143,29 @@ function(add_fastbuild_target out TARGET)
   #DBG(NAME)
   get_target_property(SOURCES ${TARGET} SOURCES)
   #DBG(SOURCES)
-  
   get_gcc_compile_flags(${TARGET} flags)
   #DBG(flags)
-  
-  
-  list(GET SOURCES 0 elem)
-  DBG(elem)
-  get_source_file_property(RESULT ${elem} COMPILE_FLAGS)
-  DBG(RESULT)
   
   get_libraries(IncludeLibs target)
   #DBG(IncludeLibs)
   string(REPLACE ";" " " IncludeLibs "${IncludeLibs}")
   string(REPLACE ";" " " flags "${flags}")
-  toFastbuildArray("${SOURCES}" fba)
-  
-
-
-  set(ret "
-ObjectList( '${NAME}-Lib' ) {
-  .CompilerInputFiles = ${fba}
-  .CompilerOutputPath = '/out/' 
-  .CompilerOptions = '%1' 
-  + ' -c' 
-  + ' -o \"%2\" '
-  + '${flags}'
-}")
+  set(ret "\n.CompilerOptions = '${flags}'\n")
+  set(libraries "")
+  foreach(i ${SOURCES})
+    add_source_file(ret ${i})
+    get_source_file_property(srcLOCATION ${i} LOCATION)
+    string(REPLACE "/" "-" srcLOCATION "${srcLOCATION}")
+    string(REPLACE "\\" "-" srcLOCATION "${srcLOCATION}")
+    string(REPLACE "." "-" srcLOCATION "${srcLOCATION}")
+    string(REPLACE ":" "" srcLOCATION "${srcLOCATION}")
+    list(APPEND libraries "${srcLOCATION}")
+  endforeach()
+  toFastbuildArray("${libraries}" libraries)
   if(TYPE STREQUAL "EXECUTABLE")
   set(ret "${ret} 
 Executable( '${NAME}' ) {
-  .Libraries = { '${NAME}-Lib' } 
+  .Libraries = ${libraries} 
   .LinkerOutput = '$<TARGET_FILE:${TARGET}>'
   .LinkerOptions = '%1' 
   + ' -o \"%2\"' 
