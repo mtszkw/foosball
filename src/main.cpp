@@ -47,8 +47,6 @@ int main(int argc, const char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////
-
     cv::Mat frame;
     cv::VideoCapture capture(INPUT_PATH);
 
@@ -69,11 +67,9 @@ int main(int argc, const char *argv[])
         double dT = (foundBallsState.getTicks() - precTick) / cv::getTickFrequency(); 
 
         capture >> frame;
-        if (frame.empty())
-            break;
+        if (frame.empty()) break;
 
         frame = cameraCalibration.getUndistortedImage(frame);
-
         aruco::detectArucoOnFrame(frame, aruco_dict, found, rejected, detector);
         
         gameTable.updateTableOnFrame(found);

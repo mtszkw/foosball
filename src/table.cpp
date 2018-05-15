@@ -1,4 +1,5 @@
 #include "table.hpp"
+#include <array>
 
 namespace table {
     static double euclideanDistance2(const cv::Point2f &a, const cv::Point2f &b) 
