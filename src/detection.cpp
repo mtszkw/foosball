@@ -84,6 +84,11 @@ void detection::FoundBallsState::detectedBallsResult(cv::Mat& res)
        	cv::Point center;
        	center.x = ballsBox[i].x + ballsBox[i].width / 2;
        	center.y = ballsBox[i].y + ballsBox[i].height / 2;
+		std::string x = std::to_string(center.x);
+		std::string y = std::to_string(center.y);
+		std::string tmp = '(' + x + ", " + y + ')';
+		cv::putText(res, tmp, cv::Point(20,20), cv::FONT_HERSHEY_COMPLEX_SMALL, 
+		            1.0, cv::Scalar(255,255,255), 1, CV_AA);
        	cv::circle(res, center, 2, CV_RGB(20,150,20), -1);
    	}
 }

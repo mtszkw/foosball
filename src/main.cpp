@@ -6,6 +6,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
 
+
 #include "cxxopts.hpp"
 #include "aruco.hpp"
 #include "table.hpp"
@@ -60,6 +61,10 @@ int main(int argc, const char *argv[])
    
     detection::FoundBallsState foundBallsState(0.0, false, 0);
 
+    int counter = 0, founded = 0;
+    //CvFont font = cvFont(1, 0.1);
+    //cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 1, 0, 1, 0);
+
     while (1) {
         double precTick = foundBallsState.getTicks();
         foundBallsState.setTicks((double) cv::getTickCount());
@@ -89,6 +94,15 @@ int main(int argc, const char *argv[])
         
         foundBallsState.updateFilter();
 
+        cv::Point center;
+        if(foundBallsState.balls.size() > 0) founded++;
+        counter++;
+        std::string f = std::to_string(founded);
+        std::string c = std::to_string(counter);
+        std::string res = f + '/' + c;
+        
+        cv::putText(restul, res, cv::Point(200,20), cv::FONT_HERSHEY_COMPLEX_SMALL,
+            1.0, cv::Scalar(255,255,255), 1, CV_AA);
         cv::imshow("Implementacje Przemyslowe", restul);
 
         foundBallsState.clearVectors();
