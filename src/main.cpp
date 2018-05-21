@@ -22,11 +22,13 @@ int main(int argc, const char *argv[])
         ("aruco_path", "Aruco dictionary configuration",
             cxxopts::value<std::string>()->default_value("data/dictionary.png"))
         ("calibration", "Calibration config file",
-            cxxopts::value<std::string>()->default_value("data/out_camera_data.xml"))
+            cxxopts::value<std::string>()->default_value("")) // for example: data/out_camera_data_240_fps.xml
+        ("calibration_conf", "Calibration init config file",
+            cxxopts::value<std::string>()->default_value("data/default.xml")) // for example: data/default.xml
         ("aruco_conf", "Configuration of aruco detector",
             cxxopts::value<std::string>()->default_value(""));
 
-    std::string INPUT_PATH, ARUCO_PATH, CALIB_PATH, ARUCO_CFG_PATH;
+    std::string INPUT_PATH, ARUCO_PATH, CALIB_PATH, ARUCO_CFG_PATH, CALIBRATION_CFG_PATH;
 
     try
     {
@@ -40,6 +42,8 @@ int main(int argc, const char *argv[])
         ARUCO_PATH      = config["aruco_path"].as<std::string>();
         CALIB_PATH      = config["calibration"].as<std::string>();
         ARUCO_CFG_PATH  = config["aruco_conf"].as<std::string>();
+        CALIBRATION_CFG_PATH = config["calibration_conf"].as<std::string>();
+
     }
     catch (const cxxopts::OptionException& ex)
     {
@@ -54,8 +58,10 @@ int main(int argc, const char *argv[])
     cv::Ptr<cv::aruco::DetectorParameters> detector = aruco::loadParametersFromFile(ARUCO_CFG_PATH);
 
     std::vector<aruco::ArucoMarker> found, rejected;
-
-    calibration::CameraCalibration cameraCalibration("data/default.xml", CALIB_PATH);
+	
+    calibration::CameraCalibration cameraCalibration(CALIBRATION_CFG_PATH, CALIB_PATH);
+    if (CALIB_PATH.empty())
+        cameraCalibration.init(); // initalize calibration if user doesnt provide calibration path
     table::Table gameTable(1200, 600); // Default table size
    
     detection::FoundBallsState foundBallsState(0.0, false, 0);
