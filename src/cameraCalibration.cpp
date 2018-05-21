@@ -24,7 +24,7 @@ const                        //Write serialization for this class
 
        << "Input_FlipAroundHorizontalAxis" << flipVertical
        << "Input_Delay" << delay
-       << "Input_Skip" << skip + 1
+       << "Input_Skip" << skip
        << "Input" << input
        << "}";
 }
@@ -52,7 +52,6 @@ void Settings::read(const cv::FileNode& node)  //Read serialization for this cla
     node["Fix_K3"] >> fixK3;
     node["Fix_K4"] >> fixK4;
     node["Fix_K5"] >> fixK5;
-    skip += 1;
     validate();
 }
 void Settings::validate()
@@ -107,6 +106,12 @@ void Settings::validate()
     if (inputType == INVALID)
     {
         cerr << " Input does not exist: " << input;
+        goodInput = false;
+    }
+
+    if (skip <= 0)
+    {
+        cerr << "Skip value must be greater than 0";
         goodInput = false;
     }
 
