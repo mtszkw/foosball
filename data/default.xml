@@ -21,7 +21,10 @@
   <Input_FlipAroundHorizontalAxis>0</Input_FlipAroundHorizontalAxis>
   
   <!-- Time delay between frames in case of camera. -->
-  <Input_Delay>1000</Input_Delay>	
+  <Input_Delay>1000</Input_Delay>
+
+  <!-- How many frames should be skipped. Value should be greater than 0. -->
+  <Input_Skip>120</Input_Skip>
   
   <!-- How many frames to use, for calibration. -->
   <Calibrate_NrOfFrameToUse>15</Calibrate_NrOfFrameToUse>
