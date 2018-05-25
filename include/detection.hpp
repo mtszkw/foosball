@@ -12,6 +12,8 @@ namespace detection
 			double ticks;
     		bool foundball;
     		int notFoundCount;
+	       	cv::Point center;
+
 		
 		public:			
 			cv::KalmanFilter kalmanFilter;
@@ -33,6 +35,10 @@ namespace detection
 			int getNotFoundCount() {return notFoundCount; };
 			void setNotFoundCount(int newNotFoundCount) {notFoundCount = newNotFoundCount; };
 
+	       	cv::Point getCenter() {return center; };
+			void setCenter(cv::Point x);
+
+
 			void clearVectors()
 			{
 				contours.clear();
@@ -40,11 +46,12 @@ namespace detection
 				ballsBox.clear();
 			}
 
-
 		void contoursFiltering(cv::Mat& rangeRes);
 		void detectedBalls(cv::Mat& res, double dT);
 		void detectedBallsResult(cv::Mat& res);
 		void updateFilter();
+		void showCenterPosition(cv::Mat& res, int x, int y);
+		void showStatistics(cv::Mat& res, int founded, int all, int x, int y);
 	};
 
     cv::Mat transformToHSV(cv::Mat& image);
