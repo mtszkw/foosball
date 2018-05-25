@@ -31,5 +31,6 @@ namespace table
         void updateTableOnFrame(const std::vector<aruco::ArucoMarker> &arucoMarkers);
         void drawTableOnFrame(cv::Mat &frame);
         cv::Mat getTableFromFrame(const cv::Mat &frame);
+        const cv::Point getSize() const { return (cv::Point) output_size; };
     };
 }
