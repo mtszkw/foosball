@@ -54,6 +54,11 @@ void detection::FoundBallsState::contoursFiltering(cv::Mat& rangeRes)
 	}
 }
 
+void detection::FoundBallsState::setCenter(cv::Point x)
+{
+	center = x;
+}
+
 void detection::FoundBallsState::detectedBalls(cv::Mat& res, double dT)
 {
     kalmanFilter.transitionMatrix.at<float>(2) = dT;
@@ -70,8 +75,28 @@ void detection::FoundBallsState::detectedBalls(cv::Mat& res, double dT)
     cv::Point center;
     center.x = state.at<float>(0);
     center.y = state.at<float>(1);
+	setCenter(center);
     cv::circle(res, center, 2, CV_RGB(255,0,0), -1);
     cv::rectangle(res, predRect, CV_RGB(255,0,0), 2);
+}
+
+void detection::FoundBallsState::showCenterPosition(cv::Mat& res,  int x, int y)
+{
+	std::string xOfCenter = std::to_string(center.x);
+	std::string yOfCenter = std::to_string(center.y);
+	std::string tmp = '(' + xOfCenter + ", " + yOfCenter + ')';
+	cv::putText(res, tmp, cv::Point(x,y), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, 
+				cv::Scalar(255,255,255), 1, CV_AA);
+}
+
+void detection::FoundBallsState::showStatistics(cv::Mat& res, int founded, int all, int x, int y)
+{
+	int tmp = founded*1.0/(all*1.0)*100;
+	std::string t = std::to_string(tmp);
+	std::string result = t + '%';
+	        
+    cv::putText(res, result, cv::Point(x,y), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0,
+				 cv::Scalar(255,255,255), 1, CV_AA);
 }
 
 void detection::FoundBallsState::detectedBallsResult(cv::Mat& res)
@@ -81,9 +106,10 @@ void detection::FoundBallsState::detectedBallsResult(cv::Mat& res)
        	cv::drawContours(res, balls, i, CV_RGB(20,150,20), 1);
        	cv::rectangle(res, ballsBox[i], CV_RGB(0,255,0), 2);
 
-       	cv::Point center;
-       	center.x = ballsBox[i].x + ballsBox[i].width / 2;
-       	center.y = ballsBox[i].y + ballsBox[i].height / 2;
+		cv::Point c;
+		c.x = ballsBox[i].x + ballsBox[i].width / 2;
+       	c.y = ballsBox[i].y + ballsBox[i].height / 2;
+		setCenter(c);
        	cv::circle(res, center, 2, CV_RGB(20,150,20), -1);
    	}
 }
@@ -94,7 +120,7 @@ void detection::FoundBallsState::updateFilter()
     if (balls.size() == 0)
     {
     	setNotFoundCount(getNotFoundCount() + 1);
-    	if( getNotFoundCount() >= 100 )
+    	if( getNotFoundCount() >= 10 )
     	{
        		setFoundball(false);
     	}
@@ -166,3 +192,4 @@ void detection::circlesDetection(cv::Mat& hueImage, cv::Mat& image )
 	    cv::circle(image, center, radius, cv::Scalar(0, 255, 0), 5);
 	}
 }
+

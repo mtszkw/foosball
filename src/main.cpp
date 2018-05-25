@@ -65,6 +65,7 @@ int main(int argc, const char *argv[])
     table::Table gameTable(1200, 600); // Default table size
    
     detection::FoundBallsState foundBallsState(0.0, false, 0);
+    int counter = 0, founded = 0;
 
     while (1) {
         double precTick = foundBallsState.getTicks();
@@ -94,6 +95,12 @@ int main(int argc, const char *argv[])
         foundBallsState.detectedBallsResult(restul);
         
         foundBallsState.updateFilter();
+
+        if(foundBallsState.balls.size()) founded++;
+        counter++;
+
+        foundBallsState.showCenterPosition(restul, 20, 20);
+        foundBallsState.showStatistics(restul, founded, counter, 180, 20);
 
         cv::imshow("Implementacje Przemyslowe", restul);
 
