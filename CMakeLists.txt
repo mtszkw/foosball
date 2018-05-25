@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(ImplementacjePrzemyslowe)
 
+include(cmake/clang-cxx-dev-tools.cmake)
 
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
@@ -37,7 +38,6 @@ add_test (NAME Test1 COMMAND Test
 if(CMAKE_COMPILER_IS_GNUCC)
     target_link_libraries(ImplementacjePrzemyslowe stdc++fs)
     target_link_libraries(Test stdc++fs)
-    #set_target_properties(ImplementacjePrzemyslowe PROPERTIES LINK_FLAGS "-stdc++fs")
 endif()
 
 include(fastbuild.cmake)
