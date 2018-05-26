@@ -63,7 +63,7 @@ int main(int argc, const char *argv[])
     if (CALIB_PATH.empty())
         cameraCalibration.init(); // initalize calibration if user doesnt provide calibration path
     table::Table gameTable(1200, 600); // Default table size
-    score::ScoreCounter scoreCounter(gameTable.getSize(), 24);
+    score::ScoreCounter scoreCounter(gameTable.getSize(), 48);
 
     detection::FoundBallsState foundBallsState(0.0, false, 0);
     int counter = 0, founded = 0;
