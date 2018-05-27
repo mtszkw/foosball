@@ -57,9 +57,9 @@ namespace detection
     void ScoreCounter::printScoreBoard(cv::Mat &res, int x, int y)
     {
         std::stringstream ss;
-        ss << "Left " << getScoreLeft() << " - " << getScoreRight() 
-            << " Right. Number of outs: " << getScoreOuts();
-        cv::putText(res, ss.str(), cv::Point(x, y), cv::FONT_HERSHEY_COMPLEX_SMALL, 
-            1.0, cv::Scalar(255, 255, 255), 1, CV_AA);
+        ss << "Game score: " << getScoreLeft() << " - "
+           << getScoreRight() << " (outs: " << getScoreOuts() << ')';
+        cv::putText(res, ss.str(), cv::Point(x, y), cv::FONT_HERSHEY_DUPLEX,
+            0.55, cv::Scalar(255, 255, 255), 1, CV_AA);
     }
 } // namespace detection

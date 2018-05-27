@@ -39,10 +39,6 @@ int main()
     // Parse JSON configuration
     nlohmann::json config = readConfiguration("configuration.json");
 
-    // Initialize video capture object with video file
-    cv::Mat frame;
-    cv::VideoCapture capture(config["videoPath"].get<string>());
-
     // Initialize aruco markers detector
     vector<aruco::ArucoMarker> found, rejected; 
     auto aruco_dict = aruco::createDictionary(config["arucoDictionaryPath"].get<string>(), 5);
@@ -62,16 +58,15 @@ int main()
     detection::FoundBallsState foundBallsState(0.0, false, 0);
     int counter = 0, founded = 0;
 
-    while (1)
+    // Initialize video capture object with video file and start processing
+    cv::Mat frame;
+    cv::VideoCapture capture(config["videoPath"].get<string>());
+
+    while(capture.read(frame))
     {
         double precTick = foundBallsState.getTicks();
         foundBallsState.setTicks(static_cast<double>(cv::getTickCount()));
-
-        double dT = (foundBallsState.getTicks() - precTick) / cv::getTickFrequency();
-
-        capture >> frame;
-        if (frame.empty())
-            break;
+        double deltaTicks = (foundBallsState.getTicks() - precTick) / cv::getTickFrequency();
 
         frame = cameraCalibration.getUndistortedImage(frame);
         aruco::detectArucoOnFrame(frame, aruco_dict, found, rejected, detector);
@@ -84,7 +79,7 @@ int main()
 
         if (foundBallsState.getFoundball())
         {
-            foundBallsState.detectedBalls(result, dT);
+            foundBallsState.detectedBalls(result, deltaTicks);
         }
 
         cv::Mat rangeRes = detection::transformToHSV(frame);
@@ -97,10 +92,13 @@ int main()
 
         counter++;
 
-        foundBallsState.showCenterPosition(result, 20, 20);
-        foundBallsState.showStatistics(result, founded, counter, 180, 20);
+        // Calculate and show ball position and score
+        cv::copyMakeBorder(result, result, 65, 5, 5, 5, cv::BORDER_CONSTANT);
+        foundBallsState.showCenterPosition(result, 10, 15);
+        foundBallsState.showStatistics(result, founded, counter, 10, 35);
         scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
-        scoreCounter.printScoreBoard(result, 20, 50);
+        scoreCounter.printScoreBoard(result, 10, 55);
+
         cv::imshow("Implementacje Przemyslowe", result);
 
         foundBallsState.clearVectors();

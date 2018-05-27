@@ -86,18 +86,18 @@ namespace detection
     {
         std::string xOfCenter = std::to_string(center.x);
         std::string yOfCenter = std::to_string(center.y);
-        std::string tmp = '(' + xOfCenter + ", " + yOfCenter + ')';
-        cv::putText(res, tmp, cv::Point(x, y), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0,
-            cv::Scalar(255, 255, 255), 1, CV_AA);
+        std::string tmp = "Ball: (" + xOfCenter + ", " + yOfCenter + ')';
+        cv::putText(res, tmp, cv::Point(x, y), cv::FONT_HERSHEY_DUPLEX, 0.5,
+                    cv::Scalar(255, 255, 255), 1, CV_AA);
     }
 
     void FoundBallsState::showStatistics(cv::Mat& res, int founded, int all, int x, int y)
     {
         int tmp = static_cast<int>(founded*1.0 / (all*1.0) * 100);
         std::string t = std::to_string(tmp);
-        std::string result = t + '%';
+        std::string result = "Tracking accuracy: " + t + '%';
 
-        cv::putText(res, result, cv::Point(x, y), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0,
+        cv::putText(res, result, cv::Point(x, y), cv::FONT_HERSHEY_DUPLEX, 0.5,
             cv::Scalar(255, 255, 255), 1, CV_AA);
     }
 
