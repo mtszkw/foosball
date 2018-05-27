@@ -24,14 +24,14 @@ namespace detection
         kf.measurementMatrix.at<float>(16) = 1.0f;
         kf.measurementMatrix.at<float>(23) = 1.0f;
 
-        kf.processNoiseCov.at<float>(0) = 1e-2;
-        kf.processNoiseCov.at<float>(7) = 1e-2;
+        kf.processNoiseCov.at<float>(0) = 1e-2f;
+        kf.processNoiseCov.at<float>(7) = 1e-2f;
         kf.processNoiseCov.at<float>(14) = 5.0f;
         kf.processNoiseCov.at<float>(21) = 5.0f;
-        kf.processNoiseCov.at<float>(28) = 1e-2;
-        kf.processNoiseCov.at<float>(35) = 1e-2;
+        kf.processNoiseCov.at<float>(28) = 1e-2f;
+        kf.processNoiseCov.at<float>(35) = 1e-2f;
 
-        cv::setIdentity(kf.measurementNoiseCov, cv::Scalar(1e-1));
+        cv::setIdentity(kf.measurementNoiseCov, cv::Scalar(1e-1f));
         detection::FoundBallsState::kalmanFilter = kf;
     }
 
@@ -63,20 +63,20 @@ namespace detection
 
     void FoundBallsState::detectedBalls(cv::Mat& res, double dT)
     {
-        kalmanFilter.transitionMatrix.at<float>(2) = dT;
-        kalmanFilter.transitionMatrix.at<float>(9) = dT;
+        kalmanFilter.transitionMatrix.at<float>(2) = static_cast<float>(dT);
+        kalmanFilter.transitionMatrix.at<float>(9) = static_cast<float>(dT);
 
         state = kalmanFilter.predict();
 
         cv::Rect predRect;
-        predRect.width = state.at<float>(4);
-        predRect.height = state.at<float>(5);
-        predRect.x = state.at<float>(0) - predRect.width / 2;
-        predRect.y = state.at<float>(1) - predRect.height / 2;
+        predRect.width = static_cast<int>(state.at<float>(4));
+        predRect.height = static_cast<int>(state.at<float>(5));
+        predRect.x = static_cast<int>(state.at<float>(0) - predRect.width / 2);
+        predRect.y = static_cast<int>(state.at<float>(1) - predRect.height / 2);
 
         cv::Point center;
-        center.x = state.at<float>(0);
-        center.y = state.at<float>(1);
+        center.x = static_cast<int>(state.at<float>(0));
+        center.y = static_cast<int>(state.at<float>(1));
         setCenter(center);
         cv::circle(res, center, 2, CV_RGB(255, 0, 0), -1);
         cv::rectangle(res, predRect, CV_RGB(255, 0, 0), 2);
@@ -93,7 +93,7 @@ namespace detection
 
     void FoundBallsState::showStatistics(cv::Mat& res, int founded, int all, int x, int y)
     {
-        int tmp = founded*1.0 / (all*1.0) * 100;
+        int tmp = static_cast<int>(founded*1.0 / (all*1.0) * 100);
         std::string t = std::to_string(tmp);
         std::string result = t + '%';
 
@@ -105,7 +105,7 @@ namespace detection
     {
         for (size_t i = 0; i < balls.size(); i++)
         {
-            cv::drawContours(res, balls, i, CV_RGB(20, 150, 20), 1);
+            cv::drawContours(res, balls, static_cast<int>(i), CV_RGB(20, 150, 20), 1);
             cv::rectangle(res, ballsBox[i], CV_RGB(0, 255, 0), 2);
 
             cv::Point c;
@@ -131,10 +131,10 @@ namespace detection
         {
             setNotFoundCount(0);
 
-            meas.at<float>(0) = ballsBox[0].x + ballsBox[0].width / 2;
-            meas.at<float>(1) = ballsBox[0].y + ballsBox[0].height / 2;
-            meas.at<float>(2) = (float)ballsBox[0].width;
-            meas.at<float>(3) = (float)ballsBox[0].height;
+            meas.at<float>(0) = ballsBox[0].x + ballsBox[0].width / 2.0f;
+            meas.at<float>(1) = ballsBox[0].y + ballsBox[0].height / 2.0f;
+            meas.at<float>(2) = static_cast<float>(ballsBox[0].width);
+            meas.at<float>(3) = static_cast<float>(ballsBox[0].height);
 
             if (!getFoundball())
             {
@@ -188,9 +188,9 @@ namespace detection
 
         for (size_t currentCircle = 0; currentCircle < circles.size(); ++currentCircle)
         {
-            cv::Point center(std::round(circles[currentCircle][0]),
-                std::round(circles[currentCircle][1]));
-            int radius = std::round(circles[currentCircle][2]);
+            cv::Point center(static_cast<int>(std::round(circles[currentCircle][0])),
+                             static_cast<int>(std::round(circles[currentCircle][1])));
+            int radius = static_cast<int>(std::round(circles[currentCircle][2]));
             cv::circle(image, center, radius, cv::Scalar(0, 255, 0), 5);
         }
     }

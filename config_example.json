@@ -1,6 +1,6 @@
 {
     "videoPath": "c:/all/datasets/impl-przemyslowe/GOPR1168.MP4",
-    "videoSkipFramesStep": 5,
+    "videoSkipFramesStep": 10,
 
     "arucoDictionaryPath": "data/dictionary.png",
     "arucoDetectorConfigPath": "",
