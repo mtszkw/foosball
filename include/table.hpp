@@ -1,12 +1,12 @@
 #pragma once
 
+#include <vector>
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
-#include <vector>
 
 #include "aruco.hpp"
 
-namespace table
+namespace detection
 {
     class Table 
     {

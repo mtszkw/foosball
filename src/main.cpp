@@ -59,8 +59,8 @@ int main()
         cameraCalibration.init();
     }
 
-    table::Table gameTable(config["gameTableWidth"].get<int>(), config["gameTableHeight"].get<int>());
-    score::ScoreCounter scoreCounter(gameTable.getSize(), 48);
+    detection::Table gameTable(config["gameTableWidth"].get<int>(), config["gameTableHeight"].get<int>());
+    detection::ScoreCounter scoreCounter(gameTable.getSize(), 48);
 
     detection::FoundBallsState foundBallsState(0.0, false, 0);
     int counter = 0, founded = 0;
@@ -102,7 +102,7 @@ int main()
         foundBallsState.showCenterPosition(result, 20, 20);
         foundBallsState.showStatistics(result, founded, counter, 180, 20);
         scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
-        scoreCounter.printScoreBoard(result, 400, 20);
+        scoreCounter.printScoreBoard(result, 20, 50);
         cv::imshow("Implementacje Przemyslowe", result);
 
         foundBallsState.clearVectors();

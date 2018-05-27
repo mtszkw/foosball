@@ -1,8 +1,9 @@
-#ifndef DETECTION_HPP
-#define DETECTION_HPP
+#pragma once
 
-#include <opencv2/opencv.hpp>
 #include <vector>
+#include <opencv2/opencv.hpp>
+
+using namespace std;
 
 namespace detection
 {
@@ -14,15 +15,14 @@ namespace detection
     		int notFoundCount;
 	       	cv::Point center;
 
-		
 		public:			
 			cv::KalmanFilter kalmanFilter;
 			cv::Mat state;  
     		cv::Mat meas;
 			
-			std::vector<std::vector<cv::Point> > contours;
-        	std::vector<std::vector<cv::Point> > balls;
-        	std::vector<cv::Rect> ballsBox;
+			vector<vector<cv::Point> > contours;
+        	vector<vector<cv::Point> > balls;
+        	vector<cv::Rect> ballsBox;
 
 			FoundBallsState(double ticks, bool foundball, int notFoundCount);
 
@@ -37,7 +37,6 @@ namespace detection
 
 	       	cv::Point getCenter() {return center; };
 			void setCenter(cv::Point x);
-
 
 			void clearVectors()
 			{
@@ -56,7 +55,4 @@ namespace detection
 
     cv::Mat transformToHSV(cv::Mat& image);
     void circlesDetection(cv::Mat& hueImage, cv::Mat& image);
-
 }
-
-#endif //DETECTION_HPP
