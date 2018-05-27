@@ -4,8 +4,8 @@ project(ImplementacjePrzemyslowe)
 include(cmake/clang-cxx-dev-tools.cmake)
 
 # Setting variables
-file(GLOB HEADERS "include/*.hpp")
-file(GLOB SRC "src/*.cpp")
+file(GLOB_RECURSE HEADERS "include/*.hpp")
+file(GLOB_RECURSE SRC "src/*.cpp")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CONFIGURATION_FILE "configuration.json")
@@ -32,7 +32,7 @@ set(SOURCE_TEST_FILES
     test/TestCase.cpp
     test/TestAruco.cpp
 
-    src/aruco.cpp
+    src/aruco/aruco.cpp
     )
 
 add_executable (${PROJECT_NAME}_tests ${SOURCE_TEST_FILES})

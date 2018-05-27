@@ -1,5 +1,5 @@
 #include <filesystem>
-#include "aruco.hpp"
+#include "aruco/aruco.hpp"
 
 namespace aruco
 {

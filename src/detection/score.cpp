@@ -1,4 +1,4 @@
-#include "score.hpp"
+#include "detection/score.hpp"
 
 namespace detection
 {

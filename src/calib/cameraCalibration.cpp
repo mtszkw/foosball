@@ -1,4 +1,4 @@
-#include "cameraCalibration.h"
+#include "calib/cameraCalibration.hpp"
 
 using namespace std;
 using namespace calibration;

@@ -1,5 +1,5 @@
-#include "table.hpp"
 #include <array>
+#include "detection/table.hpp"
 
 namespace detection
 {

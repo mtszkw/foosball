@@ -7,11 +7,11 @@
 #include <opencv2/opencv.hpp>
 
 #include "json.hpp"
-#include "aruco.hpp"
-#include "cameraCalibration.h"
-#include "detection.hpp"
-#include "score.hpp"
-#include "table.hpp"
+#include "aruco/aruco.hpp"
+#include "calib/cameraCalibration.hpp"
+#include "detection/detection.hpp"
+#include "detection/score.hpp"
+#include "detection/table.hpp"
 
 using namespace std;
 
@@ -41,18 +41,15 @@ int main()
 
     // Initialize video capture object with video file
     cv::Mat frame;
-    cout << "Initializing video capturing\n";
     cv::VideoCapture capture(config["videoPath"].get<string>());
 
     // Initialize aruco markers detector
     vector<aruco::ArucoMarker> found, rejected; 
-    cout << "Initializing aruco markers detector\n";
     auto aruco_dict = aruco::createDictionary(config["arucoDictionaryPath"].get<string>(), 5);
     auto detector = aruco::loadParametersFromFile(config["arucoDetectorConfigPath"].get<string>());
 
     // Initialize camera calibration module
     // Run calibration if calibration file path was not provided
-    cout << "Initializing camera calibration module\n";
     calibration::CameraCalibration cameraCalibration(config["calibInitConfigPath"].get<string>(),
                                                      config["calibConfigPath"].get<string>());
     if (config["calibConfigPath"].get<string>().empty()) {
@@ -97,6 +94,7 @@ int main()
 
         if (foundBallsState.balls.size())
             founded++;
+
         counter++;
 
         foundBallsState.showCenterPosition(result, 20, 20);
