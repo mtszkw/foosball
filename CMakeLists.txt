@@ -43,8 +43,8 @@ add_test (NAME Test1 COMMAND Test)
 
 if(CMAKE_COMPILER_IS_GNUCC)
     target_link_libraries(${PROJECT_NAME} stdc++fs)
-    target_link_libraries(Test stdc++fs)
+    target_link_libraries(${PROJECT_NAME}_tests stdc++fs)
 endif()
 
 include(fastbuild.cmake)
-generate_fastbuild("ImplementacjePrzemyslowe;Test")
+generate_fastbuild(${PROJECT_NAME};${PROJECT_NAME}_tests)

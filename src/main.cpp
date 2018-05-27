@@ -15,19 +15,19 @@
 
 using namespace std;
 
-nlohmann::json readConfiguration(const std::string &filename)
+nlohmann::json readConfiguration(const string &filename)
 {
     nlohmann::json config;
-    if (std::ifstream configFile(filename); configFile.is_open())
+    if (ifstream configFile(filename); configFile.is_open())
     {
-        std::stringstream buffer;
+        stringstream buffer;
         buffer << configFile.rdbuf();
         config = nlohmann::json::parse(buffer.str());
-        std::cout << "Loaded configuration file:\n" << std::setw(4) << config << '\n';
+        cout << "Loaded configuration file:\n" << setw(4) << config << '\n';
     }
     else
     {
-        std::cout << "Cannot open configuration file\n";
+        cout << "Cannot open configuration file\n";
         exit(EXIT_FAILURE);
     }
 
