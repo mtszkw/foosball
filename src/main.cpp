@@ -6,63 +6,60 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 
+#include "json.hpp"
 #include "aruco.hpp"
 #include "cameraCalibration.h"
-#include "cxxopts.hpp"
 #include "detection.hpp"
 #include "score.hpp"
 #include "table.hpp"
 
-int main(int argc, const char *argv[])
+using namespace std;
+
+nlohmann::json readConfiguration(const std::string &filename)
 {
-    cxxopts::Options options(argv[0], "Implementacje Przemyslowe");
-    options.add_options("")("help", "Display help")("input_path", "Input video file path",
-                                                    cxxopts::value<std::string>())(
-        "aruco_path", "Aruco dictionary configuration",
-        cxxopts::value<std::string>()->default_value("data/dictionary.png"))(
-        "calibration", "Calibration config file",
-        cxxopts::value<std::string>()->default_value(
-            "")) // for example: data/out_camera_data_240_fps.xml
-        ("calibration_conf", "Calibration init config file",
-         cxxopts::value<std::string>()->default_value(
-             "data/default.xml")) // for example: data/default.xml
-        ("aruco_conf", "Configuration of aruco detector",
-         cxxopts::value<std::string>()->default_value(""));
-
-    std::string INPUT_PATH, ARUCO_PATH, CALIB_PATH, ARUCO_CFG_PATH, CALIBRATION_CFG_PATH;
-
-    try
+    nlohmann::json config;
+    if (std::ifstream configFile(filename); configFile.is_open())
     {
-        const auto config = options.parse(argc, argv);
-        if (config.count("help"))
-        {
-            std::cout << options.help({""}) << std::endl;
-            exit(EXIT_SUCCESS);
-        }
-        INPUT_PATH = config["input_path"].as<std::string>();
-        ARUCO_PATH = config["aruco_path"].as<std::string>();
-        CALIB_PATH = config["calibration"].as<std::string>();
-        ARUCO_CFG_PATH = config["aruco_conf"].as<std::string>();
-        CALIBRATION_CFG_PATH = config["calibration_conf"].as<std::string>();
+        std::stringstream buffer;
+        buffer << configFile.rdbuf();
+        config = nlohmann::json::parse(buffer.str());
+        std::cout << "Loaded configuration file:\n" << std::setw(4) << config << '\n';
     }
-    catch (const cxxopts::OptionException &ex)
+    else
     {
-        std::cerr << "FAILURE: Error while parsing options (" << ex.what() << ")\n";
+        std::cout << "Cannot open configuration file\n";
         exit(EXIT_FAILURE);
     }
 
+    return config;
+}
+
+int main()
+{
+    // Parse JSON configuration
+    nlohmann::json config = readConfiguration("configuration.json");
+
+    // Initialize video capture object with video file
     cv::Mat frame;
-    cv::VideoCapture capture(INPUT_PATH);
+    cout << "Initializing video capturing\n";
+    cv::VideoCapture capture(config["videoPath"].get<string>());
 
-    cv::Ptr<cv::aruco::Dictionary> aruco_dict = aruco::createDictionary(ARUCO_PATH, 5);
-    cv::Ptr<cv::aruco::DetectorParameters> detector = aruco::loadParametersFromFile(ARUCO_CFG_PATH);
+    // Initialize aruco markers detector
+    vector<aruco::ArucoMarker> found, rejected; 
+    cout << "Initializing aruco markers detector\n";
+    auto aruco_dict = aruco::createDictionary(config["arucoDictionaryPath"].get<string>(), 5);
+    auto detector = aruco::loadParametersFromFile(config["arucoDetectorConfigPath"].get<string>());
 
-    std::vector<aruco::ArucoMarker> found, rejected;
+    // Initialize camera calibration module
+    // Run calibration if calibration file path was not provided
+    cout << "Initializing camera calibration module\n";
+    calibration::CameraCalibration cameraCalibration(config["calibInitConfigPath"].get<string>(),
+                                                     config["calibConfigPath"].get<string>());
+    if (config["calibConfigPath"].get<string>().empty()) {
+        cameraCalibration.init();
+    }
 
-    calibration::CameraCalibration cameraCalibration(CALIBRATION_CFG_PATH, CALIB_PATH);
-    if (CALIB_PATH.empty())
-        cameraCalibration.init(); // initalize calibration if user doesnt provide calibration path
-    table::Table gameTable(1200, 600); // Default table size
+    table::Table gameTable(config["gameTableWidth"].get<int>(), config["gameTableHeight"].get<int>());
     score::ScoreCounter scoreCounter(gameTable.getSize(), 48);
 
     detection::FoundBallsState foundBallsState(0.0, false, 0);
@@ -71,7 +68,7 @@ int main(int argc, const char *argv[])
     while (1)
     {
         double precTick = foundBallsState.getTicks();
-        foundBallsState.setTicks((double)cv::getTickCount());
+        foundBallsState.setTicks(static_cast<double>(cv::getTickCount()));
 
         double dT = (foundBallsState.getTicks() - precTick) / cv::getTickFrequency();
 
@@ -85,38 +82,35 @@ int main(int argc, const char *argv[])
         gameTable.updateTableOnFrame(found);
         frame = gameTable.getTableFromFrame(frame);
 
-        cv::Mat restul;
-        frame.copyTo(restul);
+        cv::Mat result;
+        frame.copyTo(result);
 
         if (foundBallsState.getFoundball())
         {
-            foundBallsState.detectedBalls(restul, dT);
+            foundBallsState.detectedBalls(result, dT);
         }
 
         cv::Mat rangeRes = detection::transformToHSV(frame);
         foundBallsState.contoursFiltering(rangeRes);
-        foundBallsState.detectedBallsResult(restul);
-
+        foundBallsState.detectedBallsResult(result);
         foundBallsState.updateFilter();
 
         if (foundBallsState.balls.size())
             founded++;
         counter++;
 
-        foundBallsState.showCenterPosition(restul, 20, 20);
-        foundBallsState.showStatistics(restul, founded, counter, 180, 20);
+        foundBallsState.showCenterPosition(result, 20, 20);
+        foundBallsState.showStatistics(result, founded, counter, 180, 20);
         scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
-        scoreCounter.printScoreBoard(restul, 400, 20);
-        cv::imshow("Implementacje Przemyslowe", restul);
+        scoreCounter.printScoreBoard(result, 400, 20);
+        cv::imshow("Implementacje Przemyslowe", result);
 
         foundBallsState.clearVectors();
 
         if (cv::waitKey(10) >= 0)
             break;
 
-        const int SKIP_FRAMES = 5;
-        for (int i = 0; i < SKIP_FRAMES; ++i)
-            capture >> frame;
+        for (int i=0; i<config["videoSkipFramesStep"].get<int>(); ++i) capture >> frame;
     }
 
     return 0;

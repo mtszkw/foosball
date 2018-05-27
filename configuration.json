@@ -1,0 +1,14 @@
+{
+    "videoPath": "c:/all/datasets/impl-przemyslowe/GOPR1168.MP4",
+    "videoSkipFramesStep": 5,
+
+    "arucoDictionaryPath": "data/dictionary.png",
+    "arucoDetectorConfigPath": "",
+
+    "calibPerformCalibration": "false",
+    "calibConfigPath": "data/out_camera_data_240_fps.xml",
+    "calibInitConfigPath": "",
+
+    "gameTableWidth": 600,
+    "gameTableHeight": 300
+}
