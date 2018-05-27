@@ -36,3 +36,6 @@ if(CMAKE_COMPILER_IS_GNUCC)
     target_link_libraries(ImplementacjePrzemyslowe stdc++fs)
     target_link_libraries(Test stdc++fs)
 endif()
+
+include(fastbuild.cmake)
+generate_fastbuild("ImplementacjePrzemyslowe;Test")
