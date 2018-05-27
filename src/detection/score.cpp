@@ -31,7 +31,7 @@ namespace detection
 
         if (!isValid && clearFlag && isBallOutOfTable(lastPosition))
         {
-            if (lastPosition.y > 200 && lastPosition.y < 400) 
+            if (lastPosition.y > (tableSize.y / 3) && lastPosition.y < (2 * tableSize.y / 3)) 
             {
                 if (lastPosition.x < 0) {
                     lastEvent = LastEventType::EV_GOOL_RIGHT;
