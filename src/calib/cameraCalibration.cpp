@@ -155,6 +155,10 @@ cv::Mat Settings::nextImage()
     if (inputCapture.isOpened())
     {
         cv::Mat view0;
+        for (int i = 0; i < skip; ++i)
+        {
+            inputCapture.grab();
+        }
         inputCapture >> view0;
         view0.copyTo(result);
     }
