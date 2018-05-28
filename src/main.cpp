@@ -30,7 +30,6 @@ int main(int argc, const char *argv[])
          cxxopts::value<std::string>()->default_value(""));
 
     std::string INPUT_PATH, ARUCO_PATH, CALIB_PATH, ARUCO_CFG_PATH, CALIBRATION_CFG_PATH;
-
     try
     {
         const auto config = options.parse(argc, argv);
@@ -51,6 +50,11 @@ int main(int argc, const char *argv[])
         exit(EXIT_FAILURE);
     }
 
+	std::cout << "INPUT_PATH: " << INPUT_PATH << '\n'
+			  << "ARUCO_PATH: " << ARUCO_PATH << '\n'
+			  << "CALIB_PATH: " << CALIB_PATH << '\n'
+			  << "ARUCO_CFG_PATH: " << ARUCO_CFG_PATH << '\n'
+			  << "CALIBRATION_CFG_PATH: " << CALIBRATION_CFG_PATH << '\n';
     cv::Mat frame;
     cv::VideoCapture capture(INPUT_PATH);
 
@@ -66,6 +70,8 @@ int main(int argc, const char *argv[])
     score::ScoreCounter scoreCounter(gameTable.getSize(), 48);
 
     detection::FoundBallsState foundBallsState(0.0, false, 0);
+	detection::PlayersFinder redPlayersFinder;
+	detection::PlayersFinder bluePlayersFinder;
     int counter = 0, founded = 0;
 
     while (1)
@@ -85,30 +91,35 @@ int main(int argc, const char *argv[])
         gameTable.updateTableOnFrame(found);
         frame = gameTable.getTableFromFrame(frame);
 
-        cv::Mat restul;
-        frame.copyTo(restul);
-
         if (foundBallsState.getFoundball())
         {
-            foundBallsState.detectedBalls(restul, dT);
+            foundBallsState.detectedBalls(frame, dT);
         }
 
-        cv::Mat rangeRes = detection::transformToHSV(frame);
+        cv::Mat rangeRes = detection::transformToHSV(frame, detection::Mode::BALL);
         foundBallsState.contoursFiltering(rangeRes);
-        foundBallsState.detectedBallsResult(restul);
-
+        foundBallsState.detectedBallsResult(frame);
         foundBallsState.updateFilter();
 
         if (foundBallsState.balls.size())
             founded++;
         counter++;
-
-        foundBallsState.showCenterPosition(restul, 20, 20);
-        foundBallsState.showStatistics(restul, founded, counter, 180, 20);
+        foundBallsState.showCenterPosition(frame, 20, 20);
+        foundBallsState.showStatistics(frame, founded, counter, 180, 20);
         scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
-        scoreCounter.printScoreBoard(restul, 400, 20);
-        cv::imshow("Implementacje Przemyslowe", restul);
+        scoreCounter.printScoreBoard(frame, 400, 20);
 
+		cv::Mat hsvPlayerFrameRed = detection::transformToHSV(frame, detection::Mode::RED_PLAYERS);
+		redPlayersFinder.contoursFiltering(hsvPlayerFrameRed);
+        redPlayersFinder.detectedPlayersResult(frame, detection::Mode::RED_PLAYERS);
+
+		cv::Mat hsvPlayerFrameBlue = detection::transformToHSV(frame, detection::Mode::BLUE_PLAYERS);
+		bluePlayersFinder.contoursFiltering(hsvPlayerFrameBlue);
+        bluePlayersFinder.detectedPlayersResult(frame, detection::Mode::BLUE_PLAYERS);
+
+		cv::imshow("Implementacje Przemyslowe", frame);
+		redPlayersFinder.clearVectors();
+		bluePlayersFinder.clearVectors();
         foundBallsState.clearVectors();
 
         if (cv::waitKey(10) >= 0)

@@ -1,5 +1,68 @@
 #include "detection.hpp"
 
+cv::Scalar getColorForMode(detection::Mode mode, int colorIndex)
+{
+	if(mode == detection::Mode::BALL)
+		if(colorIndex == 0)
+			return cv::Scalar(5, 121, 102);
+		else return cv::Scalar(21, 255, 203);
+	if(mode == detection::Mode::BLUE_PLAYERS)
+		if(colorIndex == 0)
+			return cv::Scalar(90, 50, 50);
+		else return cv::Scalar(130, 255, 255);
+	if(mode == detection::Mode::RED_PLAYERS)
+		if(colorIndex == 0)
+			return cv::Scalar(160, 20, 20);
+		else return cv::Scalar(200, 255, 255);
+}
+
+
+cv::Mat detection::transformToHSV(cv::Mat image, Mode mode)
+{
+	cv::Mat hsvImage;
+	if(mode != Mode::BALL)
+	{
+		cv::Mat drawing = cv::Mat::zeros( cv::Size(1200, 600), CV_8UC1 );
+		drawing(cv::Range(0, drawing.rows), cv::Range(0, 45)) = 255;
+		drawing(cv::Range(0, 200), cv::Range(45, 165)) = 255;
+		drawing(cv::Range(410, drawing.rows), cv::Range(45, 165)) = 255;
+		drawing(cv::Range(0, drawing.rows), cv::Range(165, 200)) = 255;
+		drawing(cv::Range(0, drawing.rows), cv::Range(300, 450)) = 255;
+		drawing(cv::Range(0, drawing.rows), cv::Range(580, 730)) = 255;
+		drawing(cv::Range(0, drawing.rows), cv::Range(900, 1200)) = 255;
+		bitwise_not(drawing, drawing);
+		if(mode == Mode::BLUE_PLAYERS)
+		{
+			cv::Mat res;
+			image.copyTo(res, drawing);
+			image = res;
+		}
+		else
+		{
+			cv::Mat flipped;
+			cv::flip(drawing, flipped, 1);
+			drawing = flipped;
+			cv::Mat res;
+			image.copyTo(res, drawing);
+			image = res;
+		}
+	}
+
+	cv::cvtColor(image, hsvImage, cv::COLOR_BGR2HSV);
+	cv::Mat lowerHueRange;
+	cv::Mat upperHueRange;
+	cv::inRange(hsvImage, getColorForMode(mode, 0), getColorForMode(mode, 1), lowerHueRange);
+	cv::inRange(hsvImage, getColorForMode(mode, 0), getColorForMode(mode, 1), upperHueRange);
+
+	cv::Mat hueImage;
+	cv::addWeighted(lowerHueRange, 1.0, upperHueRange, 1.0, 0.0, hueImage);
+    cv::erode(hueImage, hueImage, cv::Mat(), cv::Point(-1, -1), 2);
+    cv::dilate(hueImage, hueImage, cv::Mat(), cv::Point(-1, -1), 2);
+
+	cv::GaussianBlur(hueImage, hueImage, cv::Size(9, 9), 2, 2);
+	return hueImage;
+}
+
 detection::FoundBallsState::FoundBallsState(double ticks, bool foundball, int notFoundCount) 
 				: ticks(ticks), foundball(foundball), notFoundCount(notFoundCount)
 {
@@ -76,8 +139,8 @@ void detection::FoundBallsState::detectedBalls(cv::Mat& res, double dT)
     center.x = state.at<float>(0);
     center.y = state.at<float>(1);
 	setCenter(center);
-    cv::circle(res, center, 2, CV_RGB(255,0,0), -1);
-    cv::rectangle(res, predRect, CV_RGB(255,0,0), 2);
+    cv::circle(res, center, 2, CV_RGB(255,0,255), -1);
+    cv::rectangle(res, predRect, CV_RGB(255,0,255), 2);
 }
 
 void detection::FoundBallsState::showCenterPosition(cv::Mat& res,  int x, int y)
@@ -159,37 +222,30 @@ void detection::FoundBallsState::updateFilter()
 	}
 }
 
-cv::Mat detection::transformToHSV(cv::Mat& image)
+void detection::PlayersFinder::contoursFiltering(cv::Mat& rangeRes)
 {
-	cv::Mat hsvImage;
-	cv::cvtColor(image, hsvImage, cv::COLOR_BGR2HSV);
-	cv::Mat lowerHueRange;
-	cv::Mat upperHueRange;
-	cv::inRange(hsvImage, cv::Scalar(5, 121, 102), cv::Scalar(21, 255, 203), lowerHueRange);
-	cv::inRange(hsvImage, cv::Scalar(5, 121, 102), cv::Scalar(21, 255, 203), upperHueRange);
-
-	cv::Mat hueImage;
-	cv::addWeighted(lowerHueRange, 1.0, upperHueRange, 1.0, 0.0, hueImage);
-
-    cv::erode(hueImage, hueImage, cv::Mat(), cv::Point(-1, -1), 2);
-    cv::dilate(hueImage, hueImage, cv::Mat(), cv::Point(-1, -1), 2);
-
-	cv::GaussianBlur(hueImage, hueImage, cv::Size(9, 9), 2, 2);
-	return hueImage;
-}
-
-void detection::circlesDetection(cv::Mat& hueImage, cv::Mat& image )
-{
-	std::vector<cv::Vec3f> circles;
-    cv::HoughCircles(hueImage, circles, CV_HOUGH_GRADIENT,
-					 1, hueImage.rows/8, 100, 20, 0, 0);
-
-	for(size_t currentCircle = 0; currentCircle < circles.size(); ++currentCircle)
-	{
-	   	cv::Point center(std::round(circles[currentCircle][0]),
-	        		     std::round(circles[currentCircle][1]));
-	    int radius = std::round(circles[currentCircle][2]);
-	    cv::circle(image, center, radius, cv::Scalar(0, 255, 0), 5);
+    cv::findContours(rangeRes, players, CV_RETR_EXTERNAL,
+       	             CV_CHAIN_APPROX_NONE);
+   	for (size_t i = 0; i < players.size(); i++)
+   	{
+       	cv::Rect bBox;
+       	bBox = cv::boundingRect(players[i]);
+        playersBox.push_back(bBox);
 	}
 }
 
+void detection::PlayersFinder::detectedPlayersResult(cv::Mat& res, Mode mode)
+{
+	for (size_t i = 0; i < players.size(); i++)
+   	{	
+		if(mode == Mode::BLUE_PLAYERS)
+		{
+			cv::drawContours(res, players, i, CV_RGB(100, 100, 255), 1);
+       		cv::rectangle(res, playersBox[i], CV_RGB(0, 0, 255), 2);
+		}
+		else{
+       		cv::drawContours(res, players, i, CV_RGB(255, 100, 100), 1);
+       		cv::rectangle(res, playersBox[i], CV_RGB(255, 0, 0), 2);
+		}
+   	}
+}
