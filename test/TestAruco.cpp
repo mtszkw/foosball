@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "aruco.hpp"
+#include "aruco/aruco.hpp"
 
 // Nice, no double test macro in this lib?
 #define REQUIRE_DOUBLE(a, b) REQUIRE(std::abs(a - b) <= 10e-8)
