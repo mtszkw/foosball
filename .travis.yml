@@ -24,6 +24,7 @@ before_install:
   - cd ${TRAVIS_BUILD_DIR}
 # Update
   - sudo apt-get update
+  - sudo apt-get upgrade gcc
 
 install:
 
