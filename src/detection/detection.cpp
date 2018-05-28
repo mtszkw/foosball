@@ -1,6 +1,6 @@
-#include "detection.hpp"
+#include "detection/detection.hpp"
 
-cv::Scalar getColorForMode(detection::Mode mode, int colorIndex)
+cv::Scalar detection::getColorForMode(detection::Mode mode, int colorIndex)
 {
 	if(mode == detection::Mode::BALL)
 		if(colorIndex == 0)
@@ -16,49 +16,51 @@ cv::Scalar getColorForMode(detection::Mode mode, int colorIndex)
 		else return cv::Scalar(200, 255, 255);
 }
 
-
-cv::Mat detection::transformToHSV(cv::Mat image, Mode mode)
+cv::Mat detection::getMaskForMode(Mode mode, cv::Size size)
 {
-	cv::Mat hsvImage;
+	cv::Mat mask = cv::Mat::zeros( size, CV_8UC1 );
 	if(mode != Mode::BALL)
 	{
-		cv::Mat drawing = cv::Mat::zeros( cv::Size(1200, 600), CV_8UC1 );
-		drawing(cv::Range(0, drawing.rows), cv::Range(0, 45)) = 255;
-		drawing(cv::Range(0, 200), cv::Range(45, 165)) = 255;
-		drawing(cv::Range(410, drawing.rows), cv::Range(45, 165)) = 255;
-		drawing(cv::Range(0, drawing.rows), cv::Range(165, 200)) = 255;
-		drawing(cv::Range(0, drawing.rows), cv::Range(300, 450)) = 255;
-		drawing(cv::Range(0, drawing.rows), cv::Range(580, 730)) = 255;
-		drawing(cv::Range(0, drawing.rows), cv::Range(900, 1200)) = 255;
-		bitwise_not(drawing, drawing);
+		mask(cv::Range(0, mask.rows), cv::Range(0, 45)) = 255;
+		mask(cv::Range(0, 200), cv::Range(45, 165)) = 255;
+		mask(cv::Range(410, mask.rows), cv::Range(45, 165)) = 255;
+		mask(cv::Range(0, mask.rows), cv::Range(165, 200)) = 255;
+		mask(cv::Range(0, mask.rows), cv::Range(300, 450)) = 255;
+		mask(cv::Range(0, mask.rows), cv::Range(580, 730)) = 255;
+		mask(cv::Range(0, mask.rows), cv::Range(900, 1200)) = 255;
+		bitwise_not(mask, mask);
+
 		if(mode == Mode::BLUE_PLAYERS)
 		{
-			cv::Mat res;
-			image.copyTo(res, drawing);
-			image = res;
+			return mask;
 		}
 		else
 		{
 			cv::Mat flipped;
-			cv::flip(drawing, flipped, 1);
-			drawing = flipped;
-			cv::Mat res;
-			image.copyTo(res, drawing);
-			image = res;
+			cv::flip(mask, flipped, 1);
+			return flipped;
 		}
 	}
+	bitwise_not(mask, mask);
+	cv::imshow("", mask);
+	return mask;
+}
 
+cv::Mat detection::transformToHSV(cv::Mat image, Mode mode)
+{
+	cv::Mat hsvImage;
 	cv::cvtColor(image, hsvImage, cv::COLOR_BGR2HSV);
+	cv::Mat maskedHSVImage;
+	hsvImage.copyTo(maskedHSVImage, getMaskForMode(mode, cv::Size(hsvImage.cols, hsvImage.rows)));
 	cv::Mat lowerHueRange;
 	cv::Mat upperHueRange;
-	cv::inRange(hsvImage, getColorForMode(mode, 0), getColorForMode(mode, 1), lowerHueRange);
-	cv::inRange(hsvImage, getColorForMode(mode, 0), getColorForMode(mode, 1), upperHueRange);
+	cv::inRange(maskedHSVImage, getColorForMode(mode, 0), getColorForMode(mode, 1), lowerHueRange);
+	cv::inRange(maskedHSVImage, getColorForMode(mode, 0), getColorForMode(mode, 1), upperHueRange);
 
 	cv::Mat hueImage;
 	cv::addWeighted(lowerHueRange, 1.0, upperHueRange, 1.0, 0.0, hueImage);
     cv::erode(hueImage, hueImage, cv::Mat(), cv::Point(-1, -1), 2);
     cv::dilate(hueImage, hueImage, cv::Mat(), cv::Point(-1, -1), 2);
-
 	cv::GaussianBlur(hueImage, hueImage, cv::Size(9, 9), 2, 2);
 	return hueImage;
 }

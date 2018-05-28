@@ -1,9 +1,8 @@
 #include <filesystem>
+#include "aruco/aruco.hpp"
 
-#include "aruco.hpp"
-
-namespace aruco {
-
+namespace aruco
+{
     template<typename T> static bool _check_type(const cv::FileNode& node)
     {
         return false;

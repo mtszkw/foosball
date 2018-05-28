@@ -1,7 +1,8 @@
-#include "table.hpp"
 #include <array>
+#include "detection/table.hpp"
 
-namespace table {
+namespace detection
+{
     static double euclideanDistance2(const cv::Point2f &a, const cv::Point2f &b) 
     {
         cv::Point2f r = a - b;
@@ -68,4 +69,4 @@ namespace table {
 
         return result;
     }
-}
+} // namespace detection

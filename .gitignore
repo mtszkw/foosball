@@ -46,3 +46,6 @@ ImplementacjePrzemyslowe
 .vs/
 CMakeSettings.json
 CppProperties.json
+
+# JSON configuration
+configuration.json

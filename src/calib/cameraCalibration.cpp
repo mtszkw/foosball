@@ -1,4 +1,4 @@
-#include "cameraCalibration.h"
+#include "calib/cameraCalibration.hpp"
 
 using namespace std;
 using namespace calibration;
@@ -200,6 +200,8 @@ void CameraCalibration::help()
 
 bool CameraCalibration::init()
 {
+    cout << "Initializing camera calibration process\n";
+
     //! [file_read]
     Settings s;
     cv::FileStorage fs(inputSettingsFile, cv::FileStorage::READ); // Read the settings
