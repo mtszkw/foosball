@@ -19,30 +19,23 @@ cv::Scalar detection::getColorForMode(detection::Mode mode, int colorIndex)
 cv::Mat detection::getMaskForMode(Mode mode, cv::Size size)
 {
 	cv::Mat mask = cv::Mat::zeros( size, CV_8UC1 );
+	bitwise_not(mask, mask);
 	if(mode != Mode::BALL)
 	{
-		mask(cv::Range(0, mask.rows), cv::Range(0, 45)) = 255;
-		mask(cv::Range(0, 200), cv::Range(45, 165)) = 255;
-		mask(cv::Range(410, mask.rows), cv::Range(45, 165)) = 255;
-		mask(cv::Range(0, mask.rows), cv::Range(165, 200)) = 255;
-		mask(cv::Range(0, mask.rows), cv::Range(300, 450)) = 255;
-		mask(cv::Range(0, mask.rows), cv::Range(580, 730)) = 255;
-		mask(cv::Range(0, mask.rows), cv::Range(900, 1200)) = 255;
-		bitwise_not(mask, mask);
-
-		if(mode == Mode::BLUE_PLAYERS)
-		{
-			return mask;
-		}
-		else
+		mask(cv::Range(0, mask.rows), cv::Range(0, 9 * mask.cols / 240 )) = 0;
+		mask(cv::Range(0, mask.rows / 3), cv::Range( 9 * mask.cols / 240 , 33 * mask.cols / 240)) = 0;
+		mask(cv::Range(41 * mask.rows / 60, mask.rows), cv::Range( 9 * mask.cols / 240,  33 * mask.cols / 240)) = 0;
+		mask(cv::Range(0, mask.rows), cv::Range(33 * mask.cols / 240, mask.cols / 6)) = 0;
+		mask(cv::Range(0, mask.rows), cv::Range(mask.cols / 4, 9 * mask.cols / 24)) = 0;
+		mask(cv::Range(0, mask.rows), cv::Range(29 * mask.cols / 60, 73 * mask.cols / 120)) = 0;
+		mask(cv::Range(0, mask.rows), cv::Range(3 * mask.cols / 4, mask.cols)) = 0;
+		if(mode == Mode::RED_PLAYERS)
 		{
 			cv::Mat flipped;
 			cv::flip(mask, flipped, 1);
-			return flipped;
+			mask = flipped;
 		}
 	}
-	bitwise_not(mask, mask);
-	cv::imshow("", mask);
 	return mask;
 }
 

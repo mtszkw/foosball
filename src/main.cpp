@@ -78,6 +78,7 @@ int main()
         gameTable.updateTableOnFrame(found);
         frame = gameTable.getTableFromFrame(frame);
 
+		// Ball detection
         if (foundBallsState.getFoundball())
         {
             foundBallsState.detectedBalls(frame, deltaTicks);
@@ -93,13 +94,7 @@ int main()
 
         counter++;
 
-        // Calculate and show ball position and score
-        cv::copyMakeBorder(frame, frame, 65, 5, 5, 5, cv::BORDER_CONSTANT);
-        foundBallsState.showCenterPosition(frame, 10, 15);
-        foundBallsState.showStatistics(frame, founded, counter, 10, 35);
-        scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
-        scoreCounter.printScoreBoard(frame, 10, 55);
-
+		// Players detection
 		cv::Mat hsvPlayerFrameRed = detection::transformToHSV(frame, detection::Mode::RED_PLAYERS);
 		redPlayersFinder.contoursFiltering(hsvPlayerFrameRed);
         redPlayersFinder.detectedPlayersResult(frame, detection::Mode::RED_PLAYERS);
@@ -107,6 +102,13 @@ int main()
 		cv::Mat hsvPlayerFrameBlue = detection::transformToHSV(frame, detection::Mode::BLUE_PLAYERS);
 		bluePlayersFinder.contoursFiltering(hsvPlayerFrameBlue);
         bluePlayersFinder.detectedPlayersResult(frame, detection::Mode::BLUE_PLAYERS);
+
+        // Calculate and show ball position and score
+        cv::copyMakeBorder(frame, frame, 65, 5, 5, 5, cv::BORDER_CONSTANT);
+        foundBallsState.showCenterPosition(frame, 10, 15);
+        foundBallsState.showStatistics(frame, founded, counter, 10, 35);
+        scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
+        scoreCounter.printScoreBoard(frame, 10, 55);
 
 		cv::imshow("Implementacje Przemyslowe", frame);
 		redPlayersFinder.clearVectors();
