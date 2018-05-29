@@ -1,0 +1,2 @@
+make clang-format
+make
