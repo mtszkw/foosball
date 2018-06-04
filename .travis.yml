@@ -2,9 +2,6 @@ language:
   - cpp
   
 cache:
-  - bundler
-  - cocoapods
-  - ccache
   directories:
   - $HOME/modules
   
