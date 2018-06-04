@@ -1,4 +1,6 @@
 #include <filesystem>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include <vector>
 
@@ -18,7 +20,7 @@ using namespace std;
 nlohmann::json readConfiguration(const string &filename)
 {
     nlohmann::json config;
-    if (ifstream configFile(filename); configFile.is_open())
+	if (ifstream configFile(filename); configFile.is_open())
     {
         stringstream buffer;
         buffer << configFile.rdbuf();
@@ -43,7 +45,7 @@ int main()
     vector<aruco::ArucoMarker> found, rejected; 
     auto aruco_dict = aruco::createDictionary(config["arucoDictionaryPath"].get<string>(), 5);
     auto detector = aruco::loadParametersFromFile(config["arucoDetectorConfigPath"].get<string>());
-
+	
     // Initialize camera calibration module
     // Run calibration if calibration file path was not provided
     calibration::CameraCalibration cameraCalibration(config["calibInitConfigPath"].get<string>(),
@@ -56,6 +58,8 @@ int main()
     detection::ScoreCounter scoreCounter(gameTable.getSize(), 48);
 
     detection::FoundBallsState foundBallsState(0.0, false, 0);
+	detection::PlayersFinder redPlayersFinder;
+	detection::PlayersFinder bluePlayersFinder;
     int counter = 0, founded = 0;
 
     // Initialize video capture object with video file and start processing
@@ -74,17 +78,15 @@ int main()
         gameTable.updateTableOnFrame(found);
         frame = gameTable.getTableFromFrame(frame);
 
-        cv::Mat result;
-        frame.copyTo(result);
-
+		// Ball detection
         if (foundBallsState.getFoundball())
         {
-            foundBallsState.detectedBalls(result, deltaTicks);
+            foundBallsState.detectedBalls(frame, deltaTicks);
         }
 
-        cv::Mat rangeRes = detection::transformToHSV(frame);
+        cv::Mat rangeRes = detection::transformToHSV(frame, detection::Mode::BALL);
         foundBallsState.contoursFiltering(rangeRes);
-        foundBallsState.detectedBallsResult(result);
+        foundBallsState.detectedBallsResult(frame);
         foundBallsState.updateFilter();
 
         if (foundBallsState.balls.size())
@@ -92,15 +94,25 @@ int main()
 
         counter++;
 
+		// Players detection
+		cv::Mat hsvPlayerFrameRed = detection::transformToHSV(frame, detection::Mode::RED_PLAYERS);
+		redPlayersFinder.contoursFiltering(hsvPlayerFrameRed);
+        redPlayersFinder.detectedPlayersResult(frame, detection::Mode::RED_PLAYERS);
+		
+		cv::Mat hsvPlayerFrameBlue = detection::transformToHSV(frame, detection::Mode::BLUE_PLAYERS);
+		bluePlayersFinder.contoursFiltering(hsvPlayerFrameBlue);
+        bluePlayersFinder.detectedPlayersResult(frame, detection::Mode::BLUE_PLAYERS);
+
         // Calculate and show ball position and score
-        cv::copyMakeBorder(result, result, 65, 5, 5, 5, cv::BORDER_CONSTANT);
-        foundBallsState.showCenterPosition(result, 10, 15);
-        foundBallsState.showStatistics(result, founded, counter, 10, 35);
+        cv::copyMakeBorder(frame, frame, 65, 5, 5, 5, cv::BORDER_CONSTANT);
+        foundBallsState.showCenterPosition(frame, 10, 15);
+        foundBallsState.showStatistics(frame, founded, counter, 10, 35);
         scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
-        scoreCounter.printScoreBoard(result, 10, 55);
+        scoreCounter.printScoreBoard(frame, 10, 55);
 
-        cv::imshow("Implementacje Przemyslowe", result);
-
+		cv::imshow("Implementacje Przemyslowe", frame);
+		redPlayersFinder.clearVectors();
+		bluePlayersFinder.clearVectors();
         foundBallsState.clearVectors();
 
         if (cv::waitKey(10) >= 0)

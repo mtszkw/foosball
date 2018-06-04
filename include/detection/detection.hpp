@@ -7,6 +7,16 @@ using namespace std;
 
 namespace detection
 {
+	enum Mode {
+	BALL = 0,
+	BLUE_PLAYERS,
+	RED_PLAYERS
+	};
+
+	cv::Scalar getColorForMode(detection::Mode mode, int colorIndex);
+	cv::Mat getMaskForMode(Mode mode, cv::Size size);
+    cv::Mat transformToHSV(cv::Mat image, Mode mode);
+
 	class FoundBallsState
 	{
 		private:
@@ -53,6 +63,21 @@ namespace detection
 		void showStatistics(cv::Mat& res, int founded, int all, int x, int y);
 	};
 
-    cv::Mat transformToHSV(cv::Mat& image);
-    void circlesDetection(cv::Mat& hueImage, cv::Mat& image);
+	class PlayersFinder
+	{		
+		public:
+        	std::vector<std::vector<cv::Point> > players;
+        	std::vector<cv::Rect> playersBox;
+
+			PlayersFinder() {};
+
+			void clearVectors()
+			{
+				players.clear();
+				playersBox.clear();
+			}
+
+			void contoursFiltering(cv::Mat& rangeRes);
+			void detectedPlayersResult(cv::Mat& res, Mode mode);
+	};
 }

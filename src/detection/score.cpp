@@ -60,6 +60,6 @@ namespace detection
         ss << "Game score: " << getScoreLeft() << " - "
            << getScoreRight() << " (outs: " << getScoreOuts() << ')';
         cv::putText(res, ss.str(), cv::Point(x, y), cv::FONT_HERSHEY_DUPLEX,
-            0.55, cv::Scalar(255, 255, 255), 1, CV_AA);
+            0.5, cv::Scalar(255, 255, 255), 1, CV_AA);
     }
 } // namespace detection
