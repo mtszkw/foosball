@@ -7,7 +7,7 @@ cache:
   ccache: true
   directories:
   - opencv-3.4.0/
-  - ${TRAVIS_BUILD_DIR}/cmake/
+  #- ${TRAVIS_BUILD_DIR}/cmake/
   - /usr/local/lib/
   
 
