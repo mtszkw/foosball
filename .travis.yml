@@ -7,6 +7,8 @@ cache:
   ccache: true
   directories:
   - opencv-3.4.0/
+  - ${TRAVIS_BUILD_DIR}/cmake/
+  - /usr/local/lib/
   
 
 addons:
@@ -43,14 +45,14 @@ install:
   - sudo apt-get install -y python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev >> log.txt
 
   # Download opencv-conttrib v3.4.0 .zip file and extract.
-  #- curl -sL https://github.com/opencv/opencv_contrib/archive/3.4.0.zip > opencv.zip
-  #- unzip opencv.zip >> log.txt
+  - curl -sL https://github.com/opencv/opencv_contrib/archive/3.4.0.zip > opencv.zip
+  - unzip opencv.zip >> log.txt
   
   # Download opencv v3.4.0 .zip file and extract.
-  #- curl -sL https://github.com/opencv/opencv/archive/3.4.0.zip > opencv.zip
-  #- unzip opencv.zip >> log.txt
-  #- rm opencv.zip
-  #- cd opencv-3.4.0
+  - curl -sL https://github.com/opencv/opencv/archive/3.4.0.zip > opencv.zip
+  - unzip opencv.zip >> log.txt
+  - rm opencv.zip
+  - cd opencv-3.4.0
   
   # Create a new 'build' folder.
   - mkdir build
