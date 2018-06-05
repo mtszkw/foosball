@@ -27,10 +27,10 @@ compiler:
     
 before_install:
 # Install cmake 3.10.0rc1 version
-  - mkdir ${TRAVIS_BUILD_DIR}/cmake 
-  - cd ${TRAVIS_BUILD_DIR}/cmake
-  - wget -O cmake.sh https://cmake.org/files/v3.10/cmake-3.10.0-rc1-Linux-x86_64.sh    
-  - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=${TRAVIS_BUILD_DIR}/cmake >> log.txt
+  #- mkdir ${TRAVIS_BUILD_DIR}/cmake 
+  #- cd ${TRAVIS_BUILD_DIR}/cmake
+  #- wget -O cmake.sh https://cmake.org/files/v3.10/cmake-3.10.0-rc1-Linux-x86_64.sh    
+  #- sudo sh cmake.sh --skip-license --exclude-subdir --prefix=${TRAVIS_BUILD_DIR}/cmake >> log.txt
   - cd ${TRAVIS_BUILD_DIR}
 # Update
   - sudo apt-get update
