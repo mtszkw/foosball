@@ -52,11 +52,11 @@ install:
   #- curl -sL https://github.com/opencv/opencv/archive/3.4.0.zip > opencv.zip
   #- unzip opencv.zip >> log.txt
   #- rm opencv.zip
-  #- cd opencv-3.4.0
+  - cd opencv-3.4.0
   
   # Create a new 'build' folder.
   #- mkdir build
-  #- cd build
+  - cd build
   
   # Set build instructions for Ubuntu distro.
   #- ${TRAVIS_BUILD_DIR}/cmake/bin/cmake --version
