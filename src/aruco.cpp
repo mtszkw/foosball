@@ -1,5 +1,3 @@
-#include <filesystem>
-
 #include "aruco.hpp"
 
 #ifdef __GNUC__
@@ -7,6 +5,8 @@
 #else
 	using fs=std::experimental::filesystem;
 #endif
+
+#include <fs>
 
 namespace aruco {
 
