@@ -2,6 +2,12 @@
 
 #include "aruco.hpp"
 
+#ifdef __GNUC__
+	using fs=std::filesystem;
+#else
+	using fs=std::experimental::filesystem;
+#endif
+
 namespace aruco {
 
     template<typename T> static bool _check_type(const cv::FileNode& node)
@@ -36,8 +42,8 @@ namespace aruco {
      * */
     cv::Ptr<cv::aruco::Dictionary> createDictionary(std::string path, int correction) 
     {
-        if(!std::experimental::filesystem::exists(path))
-            throw std::experimental::filesystem::filesystem_error(
+        if(!fs::exists(path))
+            throw fs::filesystem_error(
                 "Cannot open dictionary file " + path, 
                 std::make_error_code(std::errc::no_such_file_or_directory));
         cv::Mat bitmap, tmp = cv::imread(path);
@@ -74,8 +80,8 @@ namespace aruco {
         cv::Ptr<cv::aruco::DetectorParameters> detector(new cv::aruco::DetectorParameters());
         if (!path.empty()) 
         {
-            if(!std::experimental::filesystem::exists(path))
-                throw std::experimental::filesystem::filesystem_error(
+            if(!fs::exists(path))
+                throw fs::filesystem_error(
                     "Cannot open configuration file " + path, 
                     std::make_error_code(std::errc::no_such_file_or_directory));
 
