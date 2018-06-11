@@ -7,6 +7,7 @@
 #include <opencv2/aruco.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
+#include <opencv2/tracking.hpp>
 
 #include "json.hpp"
 #include "aruco/aruco.hpp"
@@ -16,6 +17,9 @@
 #include "detection/table.hpp"
 
 using namespace std;
+
+
+
 
 nlohmann::json readConfiguration(const string &filename)
 {
@@ -57,7 +61,7 @@ int main()
     detection::Table gameTable(config["gameTableWidth"].get<int>(), config["gameTableHeight"].get<int>());
     detection::ScoreCounter scoreCounter(gameTable.getSize(), 48);
 
-    detection::FoundBallsState foundBallsState(0.0, false, 0);
+ detection::FoundBallsState foundBallsState(0.0, false, 0);
 	detection::PlayersFinder redPlayersFinder;
 	detection::PlayersFinder bluePlayersFinder;
     int counter = 0, founded = 0;
@@ -65,6 +69,28 @@ int main()
     // Initialize video capture object with video file and start processing
     cv::Mat frame;
     cv::VideoCapture capture(config["videoPath"].get<string>());
+
+    std::string trackerTypes[6] = {"BOOSTING", "MIL", "KCF", "TLD","MEDIANFLOW", "GOTURN"};
+ 
+
+    std::string trackerType = trackerTypes[4];
+    
+    cv::Ptr<cv::Tracker> tracker;
+
+        if (trackerType == "BOOSTING")
+            tracker = cv::TrackerBoosting::create();
+        if (trackerType == "MIL")
+            tracker = cv::TrackerMIL::create();
+        if (trackerType == "KCF")
+            tracker = cv::TrackerKCF::create();
+        if (trackerType == "TLD")
+            tracker = cv::TrackerTLD::create();
+        if (trackerType == "MEDIANFLOW")
+            tracker = cv::TrackerMedianFlow::create();
+        if (trackerType == "GOTURN")
+            tracker = cv::TrackerGOTURN::create();
+
+    bool tracingInit = false;
 
     while(capture.read(frame))
     {
@@ -77,18 +103,35 @@ int main()
 
         gameTable.updateTableOnFrame(found);
         frame = gameTable.getTableFromFrame(frame);
-
+		cv::Mat restul;
+		frame.copyTo(restul);
 		// Ball detection
         if (foundBallsState.getFoundball())
         {
-            foundBallsState.detectedBalls(frame, deltaTicks);
+            foundBallsState.detectedBalls(restul, deltaTicks);
         }
 
         cv::Mat rangeRes = detection::transformToHSV(frame, detection::Mode::BALL);
         foundBallsState.contoursFiltering(rangeRes);
-        foundBallsState.detectedBallsResult(frame);
-        foundBallsState.updateFilter();
-
+        foundBallsState.detectedBallsResult(restul);
+        //foundBallsState.updateFilter();
+        if(foundBallsState.balls.size() > 0 && !tracingInit){
+            tracker->init(restul, foundBallsState.bbox);
+            tracingInit = true;
+        }
+                double timer = (double)cv::getTickCount();
+                bool ok = tracker->update(frame, foundBallsState.bbox); 
+                float fps = cv::getTickFrequency() / ((double)cv::getTickCount() - timer);
+                
+                if (ok)
+                {
+                    rectangle(restul, foundBallsState.bbox, cv::Scalar( 215, 214, 0 ), 2, 1 );
+                }
+                else
+                {
+                    cv::putText(restul, "Tracking failure detected", cv::Point(100,80), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0,0,255),2);
+                }
+        
         if (foundBallsState.balls.size())
             founded++;
 
@@ -97,20 +140,20 @@ int main()
 		// Players detection
 		cv::Mat hsvPlayerFrameRed = detection::transformToHSV(frame, detection::Mode::RED_PLAYERS);
 		redPlayersFinder.contoursFiltering(hsvPlayerFrameRed);
-        redPlayersFinder.detectedPlayersResult(frame, detection::Mode::RED_PLAYERS);
-		
+		redPlayersFinder.detectedPlayersResult(restul, detection::Mode::RED_PLAYERS);
+
 		cv::Mat hsvPlayerFrameBlue = detection::transformToHSV(frame, detection::Mode::BLUE_PLAYERS);
 		bluePlayersFinder.contoursFiltering(hsvPlayerFrameBlue);
-        bluePlayersFinder.detectedPlayersResult(frame, detection::Mode::BLUE_PLAYERS);
+		bluePlayersFinder.detectedPlayersResult(restul, detection::Mode::BLUE_PLAYERS);
 
         // Calculate and show ball position and score
-        cv::copyMakeBorder(frame, frame, 65, 5, 5, 5, cv::BORDER_CONSTANT);
-        foundBallsState.showCenterPosition(frame, 10, 15);
-        foundBallsState.showStatistics(frame, founded, counter, 10, 35);
+        cv::copyMakeBorder(restul, restul, 65, 5, 5, 5, cv::BORDER_CONSTANT);
+        foundBallsState.showCenterPosition(restul, 10, 15);
+        foundBallsState.showStatistics(restul, founded, counter, 10, 35);
         scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
-        scoreCounter.printScoreBoard(frame, 10, 55);
+        scoreCounter.printScoreBoard(restul, 10, 55);
 
-		cv::imshow("Implementacje Przemyslowe", frame);
+		cv::imshow("Implementacje Przemyslowe", restul);
 		redPlayersFinder.clearVectors();
 		bluePlayersFinder.clearVectors();
         foundBallsState.clearVectors();

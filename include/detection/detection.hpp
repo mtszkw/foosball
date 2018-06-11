@@ -33,6 +33,7 @@ namespace detection
 			vector<vector<cv::Point> > contours;
         	vector<vector<cv::Point> > balls;
         	vector<cv::Rect> ballsBox;
+			cv::Rect2d bbox;
 
 			FoundBallsState(double ticks, bool foundball, int notFoundCount);
 

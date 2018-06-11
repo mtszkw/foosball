@@ -163,7 +163,7 @@ void detection::FoundBallsState::detectedBallsResult(cv::Mat& res)
    	{
        	cv::drawContours(res, balls, i, CV_RGB(20,150,20), 1);
        	cv::rectangle(res, ballsBox[i], CV_RGB(0,255,0), 2);
-
+		bbox = ballsBox[i];
 		cv::Point c;
 		c.x = ballsBox[i].x + ballsBox[i].width / 2;
        	c.y = ballsBox[i].y + ballsBox[i].height / 2;
