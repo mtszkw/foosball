@@ -1,9 +1,9 @@
 #include "aruco.hpp"
 
 #ifdef __GNUC__
-	using fs=std::filesystem;
+	using namespace fs=std::filesystem;
 #else
-	using fs=std::experimental::filesystem;
+	using namespace fs=std::experimental::filesystem;
 #endif
 
 namespace aruco {
