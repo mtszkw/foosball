@@ -16,6 +16,7 @@ namespace detection
 	cv::Scalar getColorForMode(detection::Mode mode, int colorIndex);
 	cv::Mat getMaskForMode(Mode mode, cv::Size size);
     cv::Mat transformToHSV(cv::Mat image, Mode mode);
+	cv::Mat tracking(cv::Mat image1, cv::Mat image2);
 
 	class FoundBallsState
 	{

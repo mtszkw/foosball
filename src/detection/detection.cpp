@@ -1,5 +1,19 @@
 #include "detection/detection.hpp"
 
+
+cv::Mat detection::tracking(cv::Mat image1, cv::Mat image2)
+{
+	cv::Mat result;
+	cv::absdiff(image1, image2, result);
+	threshold(result, result, 5, 255, cv::THRESH_BINARY);
+	blur(result, result, cv::Size(15, 15));
+	threshold(result, result, 5, 255, cv::THRESH_BINARY);
+	cv::bitwise_or(image1, result, result);
+	cv::bitwise_or(image2, result, result);
+	threshold(result, result, 5, 255, cv::THRESH_BINARY);
+	return result;
+}
+
 cv::Scalar detection::getColorForMode(detection::Mode mode, int colorIndex)
 {
 	if(mode == detection::Mode::BALL)
@@ -94,7 +108,7 @@ detection::FoundBallsState::FoundBallsState(double ticks, bool foundball, int no
 void detection::FoundBallsState::contoursFiltering(cv::Mat& rangeRes)
 {
     cv::findContours(rangeRes, contours, CV_RETR_EXTERNAL,
-       	             CV_CHAIN_APPROX_NONE);
+       	             CV_CHAIN_APPROX_SIMPLE);
    	for (size_t i = 0; i < contours.size(); i++)
    	{
        	cv::Rect bBox;
