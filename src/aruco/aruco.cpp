@@ -1,4 +1,5 @@
 #include "aruco/aruco.hpp"
+#include <filesystem>
 
 #ifdef __GNUC__
 	using fs=std::filesystem;
