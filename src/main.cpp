@@ -36,9 +36,91 @@ nlohmann::json readConfiguration(const string &filename)
     return config;
 }
 
+void detectPlayers(bool detectionEnabled, bool debugMode, detection::Mode mode, detection::PlayersFinder& playersFinder, cv::Mat& frame, cv::Mat& restul){
+	const string title = (mode == detection::Mode::BLUE_PLAYERS) ? "Blue players detection frame" : "Red players detection frame";
+	if(detectionEnabled){
+		cv::Mat hsvPlayerFrameBlue = detection::transformToHSV(frame, mode);
+		playersFinder.contoursFiltering(hsvPlayerFrameBlue);
+		playersFinder.detectedPlayersResult(restul, mode);
+		if(debugMode)
+		{
+			cv::imshow(title, hsvPlayerFrameBlue);	
+		}
+		else
+		{
+			cv::destroyWindow(title);
+		}
+	}
+	else
+	{
+			cv::destroyWindow(title);
+	}
+}
+
+void trackBall(bool trackingEnabled, bool debugMode, detection::FoundBallsState& foundBallsState, double deltaTicks, int& founded, int& counter, cv::Mat& frame, cv::Mat& nextFrame, cv::Mat& restul)
+{
+	if(trackingEnabled){
+			if (foundBallsState.getFoundball())
+			{
+				foundBallsState.detectedBalls(restul, deltaTicks);
+			}
+			cv::Mat rangeRes = detection::transformToHSV(frame, detection::Mode::BALL);
+			cv::Mat rangeRes2 = detection::transformToHSV(nextFrame, detection::Mode::BALL);
+			cv::Mat trackingFrame = detection::tracking(rangeRes, rangeRes2);
+			foundBallsState.contoursFiltering(trackingFrame);
+			foundBallsState.detectedBallsResult(restul);
+			foundBallsState.updateFilter();
+			if(debugMode)
+			{
+				cv::imshow("Tracking ball frame", trackingFrame);
+			}
+			else
+			{
+				cv::destroyWindow("Tracking ball frame");
+			}
+
+			if (foundBallsState.balls.size())
+			    founded++;
+
+			counter++;
+			}
+		else
+		{
+			cv::destroyWindow("Tracking ball frame");
+		}
+}
+
+void printKeyDoc(cv::Mat& frame, int x, int y)
+{
+	cv::putText(frame,
+	"o - show origin view",
+	cv::Point(x, y), cv::FONT_HERSHEY_DUPLEX,
+	0.5, cv::Scalar(255, 255, 255), 1, CV_AA);
+	cv::putText(frame,
+	"t - enable ball tracking",
+	cv::Point(x, y+15), cv::FONT_HERSHEY_DUPLEX,
+	0.5, cv::Scalar(255, 255, 255), 1, CV_AA);
+	cv::putText(frame,
+	"b - enable blue players detection",
+	cv::Point(x, y+30), cv::FONT_HERSHEY_DUPLEX,
+	0.5, cv::Scalar(255, 255, 255), 1, CV_AA);
+	cv::putText(frame,
+	"r - enable red players detection",
+	cv::Point(x+300, y), cv::FONT_HERSHEY_DUPLEX,
+	0.5, cv::Scalar(255, 255, 255), 1, CV_AA);
+	cv::putText(frame,
+	"d - enable view of debug frames",
+	cv::Point(x+300, y+15), cv::FONT_HERSHEY_DUPLEX,
+	0.5, cv::Scalar(255, 255, 255), 1, CV_AA);
+	cv::putText(frame,
+	"p - pause",
+	cv::Point(x+300, y+30), cv::FONT_HERSHEY_DUPLEX,
+	0.5, cv::Scalar(255, 255, 255), 1, CV_AA);
+}
+
 int main()
 {
-	bool originalEnabled = true;
+	bool originalEnabled = false;
 	bool trackingEnabled = true;
 	bool blueDetectionEnabled = false;
 	bool redDetectionEnabled = false;
@@ -103,78 +185,19 @@ int main()
 		cv::Mat restul;
 		frame.copyTo(restul);
 		// Ball detection
-
-		if(trackingEnabled){
-			if (foundBallsState.getFoundball())
-			{
-				foundBallsState.detectedBalls(restul, deltaTicks);
-			}
-			cv::Mat rangeRes = detection::transformToHSV(frame, detection::Mode::BALL);
-			cv::Mat rangeRes2 = detection::transformToHSV(nextFrame, detection::Mode::BALL);
-			cv::Mat trackingFrame = detection::tracking(rangeRes, rangeRes2);
-			foundBallsState.contoursFiltering(trackingFrame);
-			foundBallsState.detectedBallsResult(restul);
-			foundBallsState.updateFilter();
-			if(debugMode)
-			{
-				cv::imshow("Tracking ball frame", trackingFrame);
-			}
-			else
-			{
-				cv::destroyWindow("Tracking ball frame");
-			}
-
-			if (foundBallsState.balls.size())
-			    founded++;
-
-			counter++;
-			}
-		else
-		{
-			cv::destroyWindow("Tracking ball frame");
-		}
+		trackBall(trackingEnabled, debugMode, foundBallsState, deltaTicks, founded, counter, frame, nextFrame, restul);
 		
-		// Players detection
-		if(redDetectionEnabled){
-			cv::Mat hsvPlayerFrameRed = detection::transformToHSV(frame, detection::Mode::RED_PLAYERS);
-			redPlayersFinder.contoursFiltering(hsvPlayerFrameRed);
-			redPlayersFinder.detectedPlayersResult(restul, detection::Mode::RED_PLAYERS);
-			if(debugMode)
-			{
-				cv::imshow("Red player detection frame", hsvPlayerFrameRed);
-			}
-			else
-			{
-				cv::destroyWindow("Red player detection frame");
-			}
-		}
-		else
-		{
-				cv::destroyWindow("Red player detection frame");
-		}
-		if(blueDetectionEnabled){
-			cv::Mat hsvPlayerFrameBlue = detection::transformToHSV(frame, detection::Mode::BLUE_PLAYERS);
-			bluePlayersFinder.contoursFiltering(hsvPlayerFrameBlue);
-			bluePlayersFinder.detectedPlayersResult(restul, detection::Mode::BLUE_PLAYERS);
-			if(debugMode)
-			{
-				cv::imshow("Blue player detection frame", hsvPlayerFrameBlue);
-			}
-			else
-			{
-				cv::destroyWindow("Blue player detection frame");
-			}
-		}
-		else
-		{
-				cv::destroyWindow("Blue player detection frame");
-		}
-        // Calculate and show ball position and score
+		// Players detection		
+		detectPlayers(redDetectionEnabled, debugMode, detection::Mode::RED_PLAYERS, redPlayersFinder, frame, restul);
+		detectPlayers(blueDetectionEnabled, debugMode, detection::Mode::BLUE_PLAYERS, bluePlayersFinder, frame, restul);
+        
+		// Calculate and show ball position and score
         cv::copyMakeBorder(restul, restul, 65, 5, 5, 5, cv::BORDER_CONSTANT);
         foundBallsState.showCenterPosition(restul, 10, 15);
         foundBallsState.showStatistics(restul, founded, counter, 10, 35);
         scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
         scoreCounter.printScoreBoard(restul, 10, 55);
+		printKeyDoc(restul, 300, 20);
 
 		cv::imshow("Implementacje Przemyslowe", restul);
 		redPlayersFinder.clearVectors();
