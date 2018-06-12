@@ -1,16 +1,33 @@
 # Foosball [![Build Status](https://travis-ci.com/mtszkw/impl-przemyslowe.svg?token=e2qczaZansf4M2Pmpkha&branch=master)](https://travis-ci.com/mtszkw/impl-przemyslowe)
 
 ### About
-
-Open source application to analyze Fossball game based on video recordings
+Open-source application to analyze Foosball games based on video recordings analysis and processing.
 
 ### Features
+- Camera calibration and distortion correction,
+- Game table detection based on [Aruco](https://docs.opencv.org/3.1.0/d5/dae/tutorial_aruco_detection.html) markers,
+- Ball detection and motion tracking,
+- Score counting based on ball motion and position,
+- Red and blue players detection,
+- [FastBuild](http://www.fastbuild.org/docs/home.html) targets generation for distributed compilation,
+- Simple and user-friendly graphical user interface
 
-- table detection based on aruco
-- ball detection and tracking
-- counting score
-- red and blue players detection
-- camera calibration and destortion removal
-- cmake script to generate fastbuuld targets for distributed compilation
-- user friendly graphical interface
-- compact and readable logging
+### Installation
+Requirements:
+- C++17,
+- OpenCV == 3.4.1,
+- CMake >= 3.10.0
+
+### Usage example
+Executable binary created after building process requires JSON configuration file named `configuration.json` to work.  
+Configuration options which have to specified are shown in `config_example.json` file. One should copy (or just rename) this file to `configuration.json` and set internal values adequately.
+Meaning of particular configurations:
+- **videoPath** - path where video recording file can be found,
+- **videoSkipFramesStep** - if video FPS rate is too high, it is possible to skip `n` frames after each processed frame
+- **arucoDictionaryPath** - ...
+- **arucoDetectorConfigPath** - (optional) ...
+- **calibPerformCalibration** - ...
+- **calibConfigPath** - ...
+- **calibInitConfigPath** - (optional) ...
+- **gameTableWidth** - ...
+- **gameTableHeight** - ...
