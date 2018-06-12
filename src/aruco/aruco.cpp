@@ -6,6 +6,8 @@
 	using fs= std::experimental::filesystem;
 #endif
 
+#include fs
+
 namespace aruco
 {
     template<typename T> static bool _check_type(const cv::FileNode& node)
