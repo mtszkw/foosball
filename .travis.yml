@@ -31,6 +31,8 @@ env:
     
 before_install:
 # Install cmake 3.10.0rc1 version
+  - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-8 /usr/bin/gcc
+  - sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-8 /usr/bin/g++
   - rm -rf ${TRAVIS_BUILD_DIR}/cmake
   - mkdir ${TRAVIS_BUILD_DIR}/cmake 
   - cd ${TRAVIS_BUILD_DIR}/cmake
@@ -65,7 +67,7 @@ install:
   
   # Set build instructions for Ubuntu distro.
   - ${TRAVIS_BUILD_DIR}/cmake/bin/cmake --version
-  - ${TRAVIS_BUILD_DIR}/cmake/bin/cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.4.0/modules .. >> ${TRAVIS_BUILD_DIR}/log.txt
+  - ${TRAVIS_BUILD_DIR}/cmake/bin/cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.4.0/modules .. >> ${TRAVIS_BUILD_DIR}/log.txt
   - gcc --version
   
   # Run 'make' with four threads.
