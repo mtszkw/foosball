@@ -48,12 +48,18 @@ void detectPlayers(bool detectionEnabled, bool debugMode, detection::Mode mode, 
 		}
 		else
 		{
-			cv::destroyWindow(title);
+			try{
+				cv::destroyWindow(title);
+			}
+			catch(...){}
 		}
 	}
 	else
 	{
+		try{
 			cv::destroyWindow(title);
+		}
+		catch(...){}
 	}
 }
 
@@ -76,7 +82,10 @@ void trackBall(bool trackingEnabled, bool debugMode, detection::FoundBallsState&
 			}
 			else
 			{
-				cv::destroyWindow("Tracking ball frame");
+				try{
+					cv::destroyWindow("Tracking ball frame");
+				}
+				catch(...){}
 			}
 
 			if (foundBallsState.balls.size())
@@ -86,7 +95,10 @@ void trackBall(bool trackingEnabled, bool debugMode, detection::FoundBallsState&
 			}
 		else
 		{
-			cv::destroyWindow("Tracking ball frame");
+			try{
+				cv::destroyWindow("Tracking ball frame");
+			}
+			catch(...){}
 		}
 }
 
@@ -163,7 +175,10 @@ int main()
 		}
 		else
 		{
-			cv::destroyWindow("Original frame");
+			try{
+				cv::destroyWindow("Original frame");
+			}
+			catch(...){}
 		}
 
         for (int i=0; i<config["videoSkipFramesStep"].get<int>(); ++i) capture >> frame;
