@@ -31,3 +31,9 @@ Meaning of particular configurations:
 - **calibInitConfigPath** - (optional) ...
 - **gameTableWidth** - Width of the output image with table,
 - **gameTableHeight** - Height of the output image with table.
+
+### Screenshots
+TBD
+
+### License
+TBD
