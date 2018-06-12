@@ -40,6 +40,8 @@ namespace detection
 			double getTicks() { return ticks; };
 			void setTicks(double newTicks) { ticks = newTicks; };
 
+			cv::Point getCenter() const { return center; };
+
 			bool getFoundball() {return foundball; };
 			void setFoundball(bool newFoundball) {foundball = newFoundball; };
 
@@ -60,8 +62,6 @@ namespace detection
 		void detectedBalls(cv::Mat& res, double dT);
 		void detectedBallsResult(cv::Mat& res);
 		void updateFilter();
-		void showCenterPosition(cv::Mat& res, int x, int y);
-		void showStatistics(cv::Mat& res, int founded, int all, int x, int y);
 	};
 
 	class PlayersFinder
@@ -81,4 +81,7 @@ namespace detection
 			void contoursFiltering(cv::Mat& rangeRes);
 			void detectedPlayersResult(cv::Mat& res, Mode mode);
 	};
+	
+	void detectPlayers(bool detectionEnabled, bool debugMode, Mode mode, PlayersFinder& playersFinder, cv::Mat& frame, cv::Mat& restul);
+	void trackBall(bool trackingEnabled, bool debugMode, FoundBallsState& foundBallsState, double deltaTicks, int& founded, int& counter, cv::Mat& frame, cv::Mat& nextFrame, cv::Mat& restul);
 }

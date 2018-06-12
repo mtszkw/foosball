@@ -36,7 +36,6 @@ namespace detection
               fps(fps) {}
 
         void trackBallAndScore(const cv::Point &lastPosition, bool isValid);
-        void printScoreBoard(cv::Mat &res, int x, int y);
 
         int getScoreLeft() const { return scoreLeft; };
         int getScoreRight() const { return scoreRight; };

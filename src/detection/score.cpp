@@ -53,13 +53,4 @@ namespace detection
                 confirmLastEvent();
         }
     }
-
-    void ScoreCounter::printScoreBoard(cv::Mat &res, int x, int y)
-    {
-        std::stringstream ss;
-        ss << "Game score: " << getScoreLeft() << " - "
-           << getScoreRight() << " (outs: " << getScoreOuts() << ')';
-        cv::putText(res, ss.str(), cv::Point(x, y), cv::FONT_HERSHEY_DUPLEX,
-            0.5, cv::Scalar(255, 255, 255), 1, CV_AA);
-    }
 } // namespace detection

@@ -1,5 +1,51 @@
 #include "detection/detection.hpp"
 
+void detection::detectPlayers(bool detectionEnabled, bool debugMode, Mode mode, PlayersFinder& playersFinder, cv::Mat& frame, cv::Mat& restul)
+{
+	const string title = (mode == detection::Mode::BLUE_PLAYERS) ? "Blue players detection frame" : "Red players detection frame";
+	if(detectionEnabled){
+		cv::Mat hsvPlayerFrameBlue = detection::transformToHSV(frame, mode);
+		playersFinder.contoursFiltering(hsvPlayerFrameBlue);
+		playersFinder.detectedPlayersResult(restul, mode);
+		if(debugMode)
+		{
+			cv::imshow(title, hsvPlayerFrameBlue);	
+		}
+		else if(cv::getWindowProperty(title, cv::WindowPropertyFlags::WND_PROP_VISIBLE) >= 0)
+			cv::destroyWindow(title);
+	}
+	else if(cv::getWindowProperty(title, cv::WindowPropertyFlags::WND_PROP_VISIBLE) >= 0)
+		cv::destroyWindow(title);
+}
+
+void detection::trackBall(bool trackingEnabled, bool debugMode, FoundBallsState& foundBallsState, double deltaTicks, int& founded, int& counter, cv::Mat& frame, cv::Mat& nextFrame, cv::Mat& restul)
+{
+	const string title = "Tracking ball frame";
+	if(trackingEnabled){
+		if (foundBallsState.getFoundball())
+		{
+			foundBallsState.detectedBalls(restul, deltaTicks);
+		}
+		cv::Mat rangeRes = detection::transformToHSV(frame, detection::Mode::BALL);
+		cv::Mat rangeRes2 = detection::transformToHSV(nextFrame, detection::Mode::BALL);
+		cv::Mat trackingFrame = detection::tracking(rangeRes, rangeRes2);
+		foundBallsState.contoursFiltering(trackingFrame);
+		foundBallsState.detectedBallsResult(restul);
+		foundBallsState.updateFilter();
+		if(debugMode)
+		{
+			cv::imshow(title, trackingFrame);
+		}
+		else if(cv::getWindowProperty(title, cv::WindowPropertyFlags::WND_PROP_VISIBLE) >= 0)
+				cv::destroyWindow(title);
+
+		if (foundBallsState.balls.size())
+		    founded++;
+		counter++;
+	}
+	else if(cv::getWindowProperty(title, cv::WindowPropertyFlags::WND_PROP_VISIBLE) >= 0)
+		cv::destroyWindow(title);
+}
 
 cv::Mat detection::tracking(cv::Mat image1, cv::Mat image2)
 {
@@ -150,25 +196,6 @@ void detection::FoundBallsState::detectedBalls(cv::Mat& res, double dT)
 	setCenter(center);
     cv::circle(res, center, 2, CV_RGB(255,0,255), -1);
     cv::rectangle(res, predRect, CV_RGB(255,0,255), 2);
-}
-
-void detection::FoundBallsState::showCenterPosition(cv::Mat& res,  int x, int y)
-{
-	std::string xOfCenter = std::to_string(center.x);
-	std::string yOfCenter = std::to_string(center.y);
-	std::string tmp = "Ball position: (" + xOfCenter + ", " + yOfCenter + ')';
-	cv::putText(res, tmp, cv::Point(x,y), cv::FONT_HERSHEY_DUPLEX, 0.5, 
-				cv::Scalar(255,255,255), 1, CV_AA);
-}
-
-void detection::FoundBallsState::showStatistics(cv::Mat& res, int founded, int all, int x, int y)
-{
-	int tmp = founded*1.0/(all*1.0)*100;
-	std::string t = std::to_string(tmp);
-	std::string result = "Accuracy: " + t + '%';
-	        
-    cv::putText(res, result, cv::Point(x,y), cv::FONT_HERSHEY_DUPLEX, 0.5,
-				 cv::Scalar(255,255,255), 1, CV_AA);
 }
 
 void detection::FoundBallsState::detectedBallsResult(cv::Mat& res)
