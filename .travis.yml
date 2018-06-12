@@ -1,3 +1,5 @@
+sudo: required 
+
 language:
   - cpp
   
@@ -9,8 +11,6 @@ cache:
   - opencv-3.4.0/
   - ${TRAVIS_BUILD_DIR}/cmake/
   - /usr/local/lib/
-  
-sudo: required  
 
 addons:
   apt:
