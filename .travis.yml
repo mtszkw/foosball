@@ -23,7 +23,7 @@ addons:
     - g++-8
 
 compiler:
-    - gcc
+    - gcc-8
     
 before_install:
 # Install cmake 3.10.0rc1 version
