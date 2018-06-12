@@ -1,10 +1,10 @@
 #include "aruco.hpp"
 
-#ifdef __GNUC__
-	using fs = typename std::filesystem;
-#else
+//#ifdef __GNUC__
+	//using fs = typename std::filesystem;
+//#else
 	using fs = typename std::experimental::filesystem;
-#endif
+//#endif
 
 namespace aruco {
 
