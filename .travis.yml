@@ -13,10 +13,9 @@ cache:
 sudo: required  
   
 script:
-	- sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-8 /usr/bin/gcc
-	- sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-8 /usr/bin/g++
-	- gcc --version
-	- pwd
+  - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-8 /usr/bin/gcc
+  - sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-8 /usr/bin/g++
+  - gcc --version
 
 addons:
   apt:
@@ -33,8 +32,8 @@ compiler:
     - gcc-8
 	
 env:
-	- CC = gcc-8
-	- CXX = g++-8
+  - CC = gcc-8
+  - CXX = g++-8
     
 before_install:
 # Install cmake 3.10.0rc1 version
