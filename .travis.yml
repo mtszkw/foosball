@@ -27,6 +27,7 @@ compiler:
     
 before_install:
 # Install cmake 3.10.0rc1 version
+  - rm -rf ${TRAVIS_BUILD_DIR}/cmake
   - mkdir ${TRAVIS_BUILD_DIR}/cmake 
   - cd ${TRAVIS_BUILD_DIR}/cmake
   - wget -O cmake.sh https://cmake.org/files/v3.10/cmake-3.10.0-rc1-Linux-x86_64.sh    
@@ -49,13 +50,13 @@ install:
   - unzip opencv.zip >> log.txt
   
    #Download opencv v3.4.0 .zip file and extract.
-  #- curl -sL https://github.com/opencv/opencv/archive/3.4.0.zip > opencv.zip
-  #- unzip opencv.zip >> log.txt
-  #- rm opencv.zip
+  - curl -sL https://github.com/opencv/opencv/archive/3.4.0.zip > opencv.zip
+  - unzip opencv.zip >> log.txt
+  - rm opencv.zip
   - cd opencv-3.4.0
   
    #Create a new 'build' folder.
-  #- mkdir build
+  - mkdir build > /dev/null 2>&1
   - cd build
   
   # Set build instructions for Ubuntu distro.
@@ -64,7 +65,7 @@ install:
   - gcc --version
   
   # Run 'make' with four threads.
-  #- make -j16
+  - make -j16
   
   # Install to OS.
   - sudo make install >> ${TRAVIS_BUILD_DIR}/log.txt
@@ -79,7 +80,7 @@ install:
   - cd ${TRAVIS_BUILD_DIR}
 
 script:
-  - mkdir build
+  - mkdir build > /dev/null 2>&1
   - cd build
   - ${TRAVIS_BUILD_DIR}/cmake/bin/cmake ..
   - make
