@@ -56,14 +56,14 @@ install:
   - unzip opencv.zip >> log.txt
   
    #Download opencv v3.4.0 .zip file and extract.
-  - curl -sL https://github.com/opencv/opencv/archive/3.4.0.zip > opencv.zip
-  - unzip opencv.zip >> log.txt
-  - rm opencv.zip
+  #- curl -sL https://github.com/opencv/opencv/archive/3.4.0.zip > opencv.zip
+  #- unzip opencv.zip >> log.txt
+  #- rm opencv.zip
   - cd opencv-3.4.0
   
    #Create a new 'build' folder.
-  - mkdir build > /dev/null 2>&1
-  - cd build
+  #- mkdir build > /dev/null 2>&1
+  #- cd build
   
   # Set build instructions for Ubuntu distro.
   - ${TRAVIS_BUILD_DIR}/cmake/bin/cmake --version
@@ -71,7 +71,7 @@ install:
   - gcc --version
   
   # Run 'make' with four threads.
-  - make -j16
+  #- make -j16
   
   # Install to OS.
   - sudo make install >> ${TRAVIS_BUILD_DIR}/log.txt
