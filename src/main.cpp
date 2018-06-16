@@ -16,9 +16,9 @@
 #include "detection/table.hpp"
 
 #ifdef __GNUC__
-	namespace fs=std::filesystem;
+	using fs=std::filesystem;
 #else
-	namespace fs=std::experimental::filesystem;
+	using fs=std::experimental::filesystem;
 #endif
 
 using namespace std;
