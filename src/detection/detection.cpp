@@ -11,11 +11,19 @@ void detection::detectPlayers(bool detectionEnabled, bool debugMode, Mode mode, 
 		{
 			cv::imshow(title, hsvPlayerFrameBlue);	
 		}
-		else if(cv::getWindowProperty(title, cv::WindowPropertyFlags::WND_PROP_VISIBLE) >= 0)
-			cv::destroyWindow(title);
+		else
+		{
+			try{
+				cv::destroyWindow(title);
+			}catch(...){}
+		}
 	}
-	else if(cv::getWindowProperty(title, cv::WindowPropertyFlags::WND_PROP_VISIBLE) >= 0)
-		cv::destroyWindow(title);
+	else
+	{
+		try{
+			cv::destroyWindow(title);
+		}catch(...){}
+	}
 }
 
 void detection::trackBall(bool trackingEnabled, bool debugMode, FoundBallsState& foundBallsState, double deltaTicks, int& founded, int& counter, cv::Mat& frame, cv::Mat& nextFrame, cv::Mat& restul)
@@ -36,15 +44,23 @@ void detection::trackBall(bool trackingEnabled, bool debugMode, FoundBallsState&
 		{
 			cv::imshow(title, trackingFrame);
 		}
-		else if(cv::getWindowProperty(title, cv::WindowPropertyFlags::WND_PROP_VISIBLE) >= 0)
+		else 
+		{
+			try{
 				cv::destroyWindow(title);
+			}catch(...){}
+		}
 
 		if (foundBallsState.balls.size())
 		    founded++;
 		counter++;
 	}
-	else if(cv::getWindowProperty(title, cv::WindowPropertyFlags::WND_PROP_VISIBLE) >= 0)
-		cv::destroyWindow(title);
+	else 
+	{
+		try{
+			cv::destroyWindow(title);
+		}catch(...){}
+	}
 }
 
 cv::Mat detection::tracking(cv::Mat image1, cv::Mat image2)

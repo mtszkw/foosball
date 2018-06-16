@@ -22,8 +22,12 @@ void gui::showOriginalFrame(bool originalEnabled, cv::Mat& frame)
 	{
 		cv::imshow(title, frame);
 	}
-	else if(cv::getWindowProperty(title, cv::WindowPropertyFlags::WND_PROP_VISIBLE) >= 0)
-		cv::destroyWindow(title);
+	else
+	{
+		try{
+			cv::destroyWindow(title);
+		}catch(...){}
+	}
 }
 
 void gui::handlePressedKeys(int key, bool& originalEnabled, bool& trackingEnabled, bool& blueDetectionEnabled, bool& redDetectionEnabled, bool& pause, bool& debugMode)
