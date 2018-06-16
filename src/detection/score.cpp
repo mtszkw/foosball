@@ -4,7 +4,7 @@ namespace detection
 {
     bool ScoreCounter::isBallOutOfTable(const cv::Point &lastPosition)
     {
-        return lastPosition.x < 0.0 || lastPosition.y < 0.0 || lastPosition.x > tableSize.x ||
+        return lastPosition.x < 60.0 || lastPosition.y < 0.0 || lastPosition.x > tableSize.x - 60.0 ||
                lastPosition.y > tableSize.y;
     }
 
@@ -31,11 +31,11 @@ namespace detection
 
         if (!isValid && clearFlag && isBallOutOfTable(lastPosition))
         {
-            if (lastPosition.y > (tableSize.y / 3) && lastPosition.y < (2 * tableSize.y / 3)) 
+            if (lastPosition.y > (tableSize.y / 3) && lastPosition.y < tableSize.y) 
             {
-                if (lastPosition.x < 0) {
+                if (lastPosition.x < 60) {
                     lastEvent = LastEventType::EV_GOOL_RIGHT;
-                } else if (lastPosition.x > tableSize.x) {
+                } else if (lastPosition.x > tableSize.x - 60) {
                     lastEvent = LastEventType::EV_GOOL_LEFT;
                 }
 

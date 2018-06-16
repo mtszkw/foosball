@@ -80,8 +80,8 @@ cv::Scalar detection::getColorForMode(detection::Mode mode, int colorIndex)
 {
 	if(mode == detection::Mode::BALL)
 		if(colorIndex == 0)
-			return cv::Scalar(5, 121, 102);
-		else return cv::Scalar(21, 255, 203);
+			return cv::Scalar(11, 120, 160);
+		else return cv::Scalar(29, 255, 203);
 	if(mode == detection::Mode::BLUE_PLAYERS)
 		if(colorIndex == 0)
 			return cv::Scalar(90, 50, 50);

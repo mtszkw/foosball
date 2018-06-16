@@ -1,4 +1,4 @@
-#include "gui\gui.hpp"
+#include "gui/gui.hpp"
 #include <string>
 #include <sstream>
 using namespace std;

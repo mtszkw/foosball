@@ -58,7 +58,7 @@ int main()
     }
 
     detection::Table gameTable(config["gameTableWidth"].get<int>(), config["gameTableHeight"].get<int>());
-    detection::ScoreCounter scoreCounter(gameTable.getSize(), 48);
+    detection::ScoreCounter scoreCounter(gameTable.getSize(), 24);
 
     detection::FoundBallsState foundBallsState(0.0, false, 0);
 	detection::PlayersFinder redPlayersFinder;
@@ -67,6 +67,7 @@ int main()
 
     // Initialize video capture object with video file and start processing
     cv::Mat frame;
+	cv::Mat flippedFrame;
 	cv::Mat nextFrame;
     cv::VideoCapture capture(config["videoPath"].get<string>());
 
@@ -98,14 +99,16 @@ int main()
 		detection::detectPlayers(redDetectionEnabled, debugMode, detection::Mode::RED_PLAYERS, redPlayersFinder, frame, restul);
 		detection::detectPlayers(blueDetectionEnabled, debugMode, detection::Mode::BLUE_PLAYERS, bluePlayersFinder, frame, restul);
         
+		cv::flip(restul, flippedFrame, 0);
+
 		// Calculate and show ball position and score
-        cv::copyMakeBorder(restul, restul, 45, 45, 5, 5, cv::BORDER_CONSTANT);
+        cv::copyMakeBorder(flippedFrame, flippedFrame, 45, 45, 5, 5, cv::BORDER_CONSTANT);
         scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
-        gui::printScoreBoard(scoreCounter, restul, (int)(5.0 / 12 * config["gameTableWidth"].get<int>()), 30);
-        gui::showCenterPosition(restul, foundBallsState.getCenter(), 10, config["gameTableHeight"].get<int>() + 65);
-        gui::showStatistics(restul, founded, counter, 10, config["gameTableHeight"].get<int>() + 80);
-		gui::printKeyDoc(restul, 300, config["gameTableHeight"].get<int>() + 65);
-		cv::imshow("Implementacje Przemyslowe", restul);
+        gui::printScoreBoard(scoreCounter, flippedFrame, (int)(5.0 / 12 * config["gameTableWidth"].get<int>()), 30);
+        gui::showCenterPosition(flippedFrame, foundBallsState.getCenter(), 10, config["gameTableHeight"].get<int>() + 65);
+        gui::showStatistics(flippedFrame, founded, counter, 10, config["gameTableHeight"].get<int>() + 80);
+		gui::printKeyDoc(flippedFrame, 300, config["gameTableHeight"].get<int>() + 65);
+		cv::imshow("Implementacje Przemyslowe", flippedFrame);
 		
 		redPlayersFinder.clearVectors();
 		bluePlayersFinder.clearVectors();

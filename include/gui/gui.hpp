@@ -1,6 +1,6 @@
 #pragma
-#include <opencv2\opencv.hpp>
-#include "detection\score.hpp"
+#include <opencv2/opencv.hpp>
+#include "detection/score.hpp"
 namespace gui
 {
 	void consoleKeyDoc();
