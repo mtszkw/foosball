@@ -34,7 +34,7 @@ before_install:
   - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-8 /usr/bin/gcc
   - sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-8 /usr/bin/g++
   #- rm -rf ${TRAVIS_BUILD_DIR}/cmake
-  - mkdir ${TRAVIS_BUILD_DIR}/cmake 
+  #- mkdir ${TRAVIS_BUILD_DIR}/cmake 
   - cd ${TRAVIS_BUILD_DIR}/cmake
   - wget -O cmake.sh https://cmake.org/files/v3.10/cmake-3.10.0-rc1-Linux-x86_64.sh    
   - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=${TRAVIS_BUILD_DIR}/cmake >> log.txt
