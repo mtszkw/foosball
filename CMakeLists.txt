@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(ImplementacjePrzemyslowe)
 
-include(cmake/clang-cxx-dev-tools.cmake)
+#include(cmake/clang-cxx-dev-tools.cmake)
 
 # Setting variables
 file(GLOB_RECURSE HEADERS "include/*.hpp")
