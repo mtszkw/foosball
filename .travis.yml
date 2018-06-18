@@ -91,5 +91,5 @@ script:
   - gcc --version
   - mkdir build > /dev/null 2>&1
   - cd build
-  #- ${TRAVIS_BUILD_DIR}/cmake/bin/cmake ..
+  - ${TRAVIS_BUILD_DIR}/cmake/bin/cmake ..
   - make
