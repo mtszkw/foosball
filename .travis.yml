@@ -62,8 +62,8 @@ install:
   #- cd opencv-3.4.0
   
    #Create a new 'build' folder.
-  #- mkdir build > /dev/null 2>&1
-  #- cd build
+  - mkdir build > /dev/null 2>&1
+  - cd build
   
   # Set build instructions for Ubuntu distro.
   - ${TRAVIS_BUILD_DIR}/cmake/bin/cmake --version
