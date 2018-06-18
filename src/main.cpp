@@ -16,6 +16,12 @@
 #include "detection/table.hpp"
 #include "gui/gui.hpp"
 
+#ifdef __GNUC__
+	using fs=std::filesystem;
+#else
+	using fs=std::experimental::filesystem;
+#endif
+
 using namespace std;
 
 nlohmann::json readConfiguration(const string &filename)
