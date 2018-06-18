@@ -1,12 +1,12 @@
 #include "aruco.hpp"
-#include <filesystem>
+
 //
 #ifdef __GNUC__
 	namespace fs=std::filesystem;
 #else
 	namespace fs=std::experimental::filesystem;
 #endif
-
+#include <fs>
 namespace aruco {
 
     template<typename T> static bool _check_type(const cv::FileNode& node)
