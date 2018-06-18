@@ -1,6 +1,6 @@
 #include "aruco.hpp"
 #include <filesystem>
-
+//
 #ifdef __GNUC__
 	namespace fs=std::filesystem;
 #else
