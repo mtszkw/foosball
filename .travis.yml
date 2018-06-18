@@ -1,4 +1,4 @@
-sudo: true 
+sudo: required 
 
 language:
   - cpp
@@ -33,8 +33,8 @@ before_install:
 # Install cmake 3.10.0rc1 version
   - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-8 /usr/bin/gcc
   - sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-8 /usr/bin/g++
-  - sudo rm -rf ${TRAVIS_BUILD_DIR}/cmake
-  - mkdir ${TRAVIS_BUILD_DIR}/cmake
+  #- rm -rf ${TRAVIS_BUILD_DIR}/cmake
+  #- mkdir ${TRAVIS_BUILD_DIR}/cmake 
   - cd ${TRAVIS_BUILD_DIR}/cmake
   - wget -O cmake.sh https://cmake.org/files/v3.10/cmake-3.10.0-rc1-Linux-x86_64.sh    
   - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=${TRAVIS_BUILD_DIR}/cmake >> log.txt
@@ -59,15 +59,15 @@ install:
   #- curl -sL https://github.com/opencv/opencv/archive/3.4.0.zip > opencv.zip
   #- unzip opencv.zip >> log.txt
   #- rm opencv.zip
-  #- cd opencv-3.4.0
+  - cd opencv-3.4.0
   
    #Create a new 'build' folder.
-  - mkdir build > /dev/null 2>&1
+  #- mkdir build > /dev/null 2>&1
   - cd build
   
   # Set build instructions for Ubuntu distro.
-  - ${TRAVIS_BUILD_DIR}/cmake/bin/cmake --version
-  - ${TRAVIS_BUILD_DIR}/cmake/bin/cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.4.0/modules .. >> ${TRAVIS_BUILD_DIR}/log.txt
+  #- ${TRAVIS_BUILD_DIR}/cmake/bin/cmake --version
+  #- ${TRAVIS_BUILD_DIR}/cmake/bin/cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D WITH_TBB=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.4.0/modules .. >> ${TRAVIS_BUILD_DIR}/log.txt
   - gcc --version
   
   # Run 'make' with four threads.
