@@ -1,4 +1,4 @@
-# Foosball [![Build Status](https://travis-ci.com/mtszkw/impl-przemyslowe.svg?token=e2qczaZansf4M2Pmpkha&branch=master)](https://travis-ci.com/mtszkw/impl-przemyslowe) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+# Foosball [![Build Status](https://travis-ci.com/mtszkw/foosball.svg?token=e2qczaZansf4M2Pmpkha&branch=master)](https://travis-ci.com/mtszkw/foosball) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ### About
 Open-source application to analyze Foosball games based on video recordings analysis and processing.
