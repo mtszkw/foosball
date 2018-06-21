@@ -62,7 +62,7 @@ install:
   - cd opencv-3.4.0
   
    #Create a new 'build' folder.
-  #- mkdir build > /dev/null 2>&1
+  - mkdir build > /dev/null 2>&1
   - cd build
   
   # Set build instructions for Ubuntu distro.
