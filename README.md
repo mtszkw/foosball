@@ -34,7 +34,11 @@ Meaning of particular configurations:
 - **gameTableHeight** - Height of the output image with table.
 
 ### Screenshots
-Below we present few screenshots from our application: 1) source video raw frame, 2) frame after distortion removal and 3) result frame including detected table area, ball/players markers and simple GUI with hotkeys and game score displayed.
+Below we present few screenshots from our application:  
+1) source video raw frame,  
+2) frame after distortion removal  
+3) result frame including detected table area, ball/players markers and GUI with hotkeys and game score displayed.
+
 <p align="center">
   <img src="https://image.ibb.co/iH0q9o/source.png" width="640" height="430" alt="Source video frame"/>
 </p>
