@@ -39,10 +39,16 @@ nlohmann::json readConfiguration(const string &filename)
 
 int main()
 {
-	bool originalEnabled = false, trackingEnabled = true, blueDetectionEnabled = false, redDetectionEnabled = false, debugMode = false, pause = false;
+    bool originalEnabled { false },
+        trackingEnabled { true },
+        blueDetectionEnabled { false },
+        redDetectionEnabled{ false },
+        debugMode{ false },
+        pause{ false };
+    
     // Parse JSON configuration
     nlohmann::json config = readConfiguration("configuration.json");
-	gui::consoleKeyDoc();
+
     // Initialize aruco markers detector
     vector<aruco::ArucoMarker> found, rejected; 
     auto aruco_dict = aruco::createDictionary(config["arucoDictionaryPath"].get<string>(), 5);
@@ -57,31 +63,35 @@ int main()
         cameraCalibration.init();
     }
 
+    // Initialize game table object with fixed size along with score counter
     detection::Table gameTable(config["gameTableWidth"].get<int>(), config["gameTableHeight"].get<int>());
     detection::ScoreCounter scoreCounter(gameTable.getSize(), 24);
 
+    int counter = 0, founded = 0; 
     detection::FoundBallsState foundBallsState(0.0, false, 0);
-	detection::PlayersFinder redPlayersFinder;
-	detection::PlayersFinder bluePlayersFinder;
-    int counter = 0, founded = 0;
+	detection::PlayersFinder redPlayersFinder, bluePlayersFinder;
 
     // Initialize video capture object with video file and start processing
-    cv::Mat frame;
-	cv::Mat flippedFrame;
-	cv::Mat nextFrame;
+    cv::Mat frame, flippedFrame, nextFrame;
     cv::VideoCapture capture(config["videoPath"].get<string>());
 
     while(capture.read(frame))
     {
 		gui::showOriginalFrame(originalEnabled, frame);
+
         for (int i=0; i<config["videoSkipFramesStep"].get<int>(); ++i) capture >> frame;
+
 		capture.read(nextFrame);
-        double precTick = foundBallsState.getTicks();
+        
+        const double precTick = foundBallsState.getTicks();
         foundBallsState.setTicks(static_cast<double>(cv::getTickCount()));
-        double deltaTicks = (foundBallsState.getTicks() - precTick) / cv::getTickFrequency();
+        const double deltaTicks = (foundBallsState.getTicks() - precTick) / cv::getTickFrequency();
 		
+        // Remove distortion from capture frame
         frame = cameraCalibration.getUndistortedImage(frame);
         nextFrame = cameraCalibration.getUndistortedImage(nextFrame);
+
+        // Detect aruco markers on captured frame and find table bounding box
         aruco::detectArucoOnFrame(frame, aruco_dict, found, rejected, detector);
         gameTable.updateTableOnFrame(found);
         frame = gameTable.getTableFromFrame(frame);
@@ -92,6 +102,7 @@ int main()
 
 		cv::Mat restul;
 		frame.copyTo(restul);
+
 		// Ball detection
 		detection::trackBall(trackingEnabled, debugMode, foundBallsState, deltaTicks, founded, counter, frame, nextFrame, restul);
 		
@@ -102,13 +113,15 @@ int main()
 		cv::flip(restul, flippedFrame, 0);
 
 		// Calculate and show ball position and score
+        scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball()); 
+        
+        // Display GUI elements and score board
         cv::copyMakeBorder(flippedFrame, flippedFrame, 45, 45, 5, 5, cv::BORDER_CONSTANT);
-        scoreCounter.trackBallAndScore(foundBallsState.getCenter(), foundBallsState.getFoundball());
         gui::printScoreBoard(scoreCounter, flippedFrame, (int)(5.0 / 12 * config["gameTableWidth"].get<int>()), 30);
         gui::showCenterPosition(flippedFrame, foundBallsState.getCenter(), 10, config["gameTableHeight"].get<int>() + 65);
         gui::showStatistics(flippedFrame, founded, counter, 10, config["gameTableHeight"].get<int>() + 80);
 		gui::printKeyDoc(flippedFrame, 300, config["gameTableHeight"].get<int>() + 65);
-		cv::imshow("Implementacje Przemyslowe", flippedFrame);
+		cv::imshow("Foosball", flippedFrame);
 		
 		redPlayersFinder.clearVectors();
 		bluePlayersFinder.clearVectors();

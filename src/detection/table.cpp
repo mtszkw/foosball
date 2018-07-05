@@ -9,7 +9,6 @@ namespace detection
         return r.dot(r);
     }
 
-
     void Table::updateTableOnFrame(const std::vector<aruco::ArucoMarker> &arucoMarkers) 
     {
         for (const aruco::ArucoMarker &marker : arucoMarkers)

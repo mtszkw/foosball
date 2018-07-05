@@ -8,9 +8,9 @@ using namespace std;
 namespace detection
 {
 	enum Mode {
-	BALL = 0,
-	BLUE_PLAYERS,
-	RED_PLAYERS
+    	BALL = 0,
+    	BLUE_PLAYERS,
+    	RED_PLAYERS
 	};
 
 	cv::Scalar getColorForMode(detection::Mode mode, int colorIndex);
@@ -20,43 +20,43 @@ namespace detection
 
 	class FoundBallsState
 	{
-		private:
-			double ticks;
-    		bool foundball;
-    		int notFoundCount;
-	       	cv::Point center;
+	private:
+		double ticks;
+    	bool foundball;
+		int notFoundCount;
+	    cv::Point center;
 
-		public:			
-			cv::KalmanFilter kalmanFilter;
-			cv::Mat state;  
-    		cv::Mat meas;
+	public:			
+		cv::KalmanFilter kalmanFilter;
+		cv::Mat state;  
+    	cv::Mat meas;
 			
-			vector<vector<cv::Point> > contours;
-        	vector<vector<cv::Point> > balls;
-        	vector<cv::Rect> ballsBox;
+		vector<vector<cv::Point> > contours;
+        vector<vector<cv::Point> > balls;
+    	vector<cv::Rect> ballsBox;
 
-			FoundBallsState(double ticks, bool foundball, int notFoundCount);
+		FoundBallsState(double ticks, bool foundball, int notFoundCount);
 
-			double getTicks() { return ticks; };
-			void setTicks(double newTicks) { ticks = newTicks; };
+		double getTicks() { return ticks; }
+		void setTicks(double newTicks) { ticks = newTicks; }
 
-			cv::Point getCenter() const { return center; };
+		cv::Point getCenter() const { return center; }
 
-			bool getFoundball() {return foundball; };
-			void setFoundball(bool newFoundball) {foundball = newFoundball; };
+		bool getFoundball() {return foundball; }
+		void setFoundball(bool newFoundball) {foundball = newFoundball; }
 
-			int getNotFoundCount() {return notFoundCount; };
-			void setNotFoundCount(int newNotFoundCount) {notFoundCount = newNotFoundCount; };
+		int getNotFoundCount() {return notFoundCount; }
+		void setNotFoundCount(int newNotFoundCount) {notFoundCount = newNotFoundCount; }
 
-	       	cv::Point getCenter() {return center; };
-			void setCenter(cv::Point x);
+	    cv::Point getCenter() {return center; }
+        void setCenter(cv::Point x);
 
-			void clearVectors()
-			{
-				contours.clear();
-				balls.clear();
-				ballsBox.clear();
-			}
+		void clearVectors()
+		{
+			contours.clear();
+			balls.clear();
+			ballsBox.clear();
+		}
 
 		void contoursFiltering(cv::Mat& rangeRes);
 		void detectedBalls(cv::Mat& res, double dT);
@@ -66,22 +66,25 @@ namespace detection
 
 	class PlayersFinder
 	{		
-		public:
-        	std::vector<std::vector<cv::Point> > players;
-        	std::vector<cv::Rect> playersBox;
+	public:
+        vector<vector<cv::Point> > players;
+        vector<cv::Rect> playersBox;
 
-			PlayersFinder() {};
+		PlayersFinder() {}
 
-			void clearVectors()
-			{
-				players.clear();
-				playersBox.clear();
-			}
+		void clearVectors()
+		{
+			players.clear();
+			playersBox.clear();
+		}
 
-			void contoursFiltering(cv::Mat& rangeRes);
-			void detectedPlayersResult(cv::Mat& res, Mode mode);
+		void contoursFiltering(cv::Mat& rangeRes);
+		void detectedPlayersResult(cv::Mat& res, Mode mode);
 	};
 	
-	void detectPlayers(bool detectionEnabled, bool debugMode, Mode mode, PlayersFinder& playersFinder, cv::Mat& frame, cv::Mat& restul);
-	void trackBall(bool trackingEnabled, bool debugMode, FoundBallsState& foundBallsState, double deltaTicks, int& founded, int& counter, cv::Mat& frame, cv::Mat& nextFrame, cv::Mat& restul);
-}
+	void detectPlayers(bool detectionEnabled, bool debugMode, Mode mode,
+        PlayersFinder& playersFinder, cv::Mat& frame, cv::Mat& restul);
+
+	void trackBall(bool trackingEnabled, bool debugMode, FoundBallsState& foundBallsState,
+        double deltaTicks, int& founded, int& counter, cv::Mat& frame, cv::Mat& nextFrame, cv::Mat& restul);
+} // namespace detection

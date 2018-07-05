@@ -3,18 +3,6 @@
 #include <sstream>
 using namespace std;
 
-void gui::consoleKeyDoc()
-{
-	stringstream ss;
-	ss << "o - show origin view" << endl
-	   << "t - enable ball tracking" << endl
-	   << "b - enable blue players detection" << endl
-	   << "r - enable red players detection" << endl
-	   << "d - enable view of debug frames" << endl
-	   << "p - pause" << endl;
-	cout << ss.str();
-}
-
 void gui::showOriginalFrame(bool originalEnabled, cv::Mat& frame)
 {
 	const string title = "Original frame";

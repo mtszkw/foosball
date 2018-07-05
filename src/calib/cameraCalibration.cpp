@@ -3,8 +3,7 @@
 using namespace std;
 using namespace calibration;
 
-void Settings::write(cv::FileStorage& fs)
-const                        //Write serialization for this class
+void Settings::write(cv::FileStorage& fs) const
 {
     fs << "{"
        << "BoardSize_Width" << boardSize.width
@@ -28,7 +27,8 @@ const                        //Write serialization for this class
        << "Input" << input
        << "}";
 }
-void Settings::read(const cv::FileNode& node)  //Read serialization for this class
+
+void Settings::read(const cv::FileNode& node)
 {
     node["BoardSize_Width"] >> boardSize.width;
     node["BoardSize_Height"] >> boardSize.height;
@@ -54,6 +54,7 @@ void Settings::read(const cv::FileNode& node)  //Read serialization for this cla
     node["Fix_K5"] >> fixK5;
     validate();
 }
+
 void Settings::validate()
 {
     goodInput = true;
@@ -146,7 +147,6 @@ void Settings::validate()
         goodInput = false;
     }
     atImageList = 0;
-
 }
 
 cv::Mat Settings::nextImage()

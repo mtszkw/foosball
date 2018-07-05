@@ -1,66 +1,54 @@
 #include "detection/detection.hpp"
 
-void detection::detectPlayers(bool detectionEnabled, bool debugMode, Mode mode, PlayersFinder& playersFinder, cv::Mat& frame, cv::Mat& restul)
+void detection::detectPlayers(bool detectionEnabled, bool debugMode, Mode mode,
+                              PlayersFinder& playersFinder, cv::Mat& frame, cv::Mat& restul)
 {
-	const string title = (mode == detection::Mode::BLUE_PLAYERS) ? "Blue players detection frame" : "Red players detection frame";
-	if(detectionEnabled){
+	const string title = mode == detection::Mode::BLUE_PLAYERS ?
+        "Blue players detection frame" : "Red players detection frame";
+
+	if(detectionEnabled)
+    {
 		cv::Mat hsvPlayerFrameBlue = detection::transformToHSV(frame, mode);
 		playersFinder.contoursFiltering(hsvPlayerFrameBlue);
 		playersFinder.detectedPlayersResult(restul, mode);
+
 		if(debugMode)
 		{
 			cv::imshow(title, hsvPlayerFrameBlue);	
 		}
-		else
-		{
-			try{
-				cv::destroyWindow(title);
-			}catch(...){}
-		}
+		else try { cv::destroyWindow(title); } catch(...) {}
 	}
-	else
-	{
-		try{
-			cv::destroyWindow(title);
-		}catch(...){}
-	}
+	else try { cv::destroyWindow(title); } catch(...){  }
 }
 
-void detection::trackBall(bool trackingEnabled, bool debugMode, FoundBallsState& foundBallsState, double deltaTicks, int& founded, int& counter, cv::Mat& frame, cv::Mat& nextFrame, cv::Mat& restul)
+void detection::trackBall(bool trackingEnabled, bool debugMode,
+                          FoundBallsState& foundBallsState, double deltaTicks,
+                          int& founded, int& counter, cv::Mat& frame, cv::Mat& nextFrame, cv::Mat& restul)
 {
 	const string title = "Tracking ball frame";
-	if(trackingEnabled){
+
+	if(trackingEnabled)
+    {
 		if (foundBallsState.getFoundball())
 		{
 			foundBallsState.detectedBalls(restul, deltaTicks);
 		}
+
 		cv::Mat rangeRes = detection::transformToHSV(frame, detection::Mode::BALL);
 		cv::Mat rangeRes2 = detection::transformToHSV(nextFrame, detection::Mode::BALL);
 		cv::Mat trackingFrame = detection::tracking(rangeRes, rangeRes2);
-		foundBallsState.contoursFiltering(trackingFrame);
+	
+        foundBallsState.contoursFiltering(trackingFrame);
 		foundBallsState.detectedBallsResult(restul);
 		foundBallsState.updateFilter();
-		if(debugMode)
-		{
-			cv::imshow(title, trackingFrame);
-		}
-		else 
-		{
-			try{
-				cv::destroyWindow(title);
-			}catch(...){}
-		}
-
-		if (foundBallsState.balls.size())
-		    founded++;
+		
+        if(debugMode) cv::imshow(title, trackingFrame);
+		else try { cv::destroyWindow(title); } catch(...){}
+	
+		if (foundBallsState.balls.size()) founded++;
 		counter++;
 	}
-	else 
-	{
-		try{
-			cv::destroyWindow(title);
-		}catch(...){}
-	}
+	else try { cv::destroyWindow(title); } catch(...){}
 }
 
 cv::Mat detection::tracking(cv::Mat image1, cv::Mat image2)

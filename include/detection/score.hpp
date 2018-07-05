@@ -6,7 +6,7 @@ namespace detection
 {
     class ScoreCounter
     {
-      private:
+    private:
         enum class LastEventType
         {
             EV_OUT, 
@@ -26,7 +26,7 @@ namespace detection
         void confirmLastEvent();
         bool isBallOutOfTable(const cv::Point &lastPosition);
 
-      public:
+    public:
         ScoreCounter(const cv::Point &tableSize, int fps)
             : scoreLeft(0),
               scoreRight(0),
@@ -37,8 +37,8 @@ namespace detection
 
         void trackBallAndScore(const cv::Point &lastPosition, bool isValid);
 
-        int getScoreLeft() const { return scoreLeft; };
-        int getScoreRight() const { return scoreRight; };
-        int getScoreOuts() const { return scoreOuts; };
+        int getScoreLeft() const { return scoreLeft; }
+        int getScoreRight() const { return scoreRight; }
+        int getScoreOuts() const { return scoreOuts; }
     };
 } // namespace score

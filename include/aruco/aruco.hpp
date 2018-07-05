@@ -10,25 +10,34 @@ namespace aruco
 {
     class ArucoMarker 
     {
-        private:
-            int id;
-            vector<cv::Point2f> corners;
+        int id;
+        vector<cv::Point2f> corners;
 
         public:
-            ArucoMarker(int id, const vector<cv::Point2f> &corners)
-                : id(id),
-                corners(corners) {}
+            ArucoMarker(int id, const vector<cv::Point2f> &corners) : id(id), corners(corners) {}
             
-            // Lets do it inline
-            bool isValid() const { return id != INVALID_ID; };
-            int getId() const { return id; };
-            const vector<cv::Point2f> &getCorners() const { return corners; }
+            bool isValid() const
+            {
+                return id != INVALID_ID;
+            }
+
+            int getId() const
+            {
+                return id;
+            }
+
+            const vector<cv::Point2f> &getCorners() const
+            {
+                return corners;
+            }
 
             const cv::Point2f getMiddle() const;
+
             const static int INVALID_ID = -1;
     };
 
     cv::Ptr<cv::aruco::Dictionary> createDictionary(string path, int correction);
+
     cv::Ptr<cv::aruco::DetectorParameters> loadParametersFromFile(string path = "");
 
     void detectArucoOnFrame(cv::Mat &frame, cv::Ptr<cv::aruco::Dictionary> arucoDictionary,
