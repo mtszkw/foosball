@@ -40,11 +40,11 @@ Below we present few screenshots from our application:
 3) result frame including detected table area, ball/players markers and GUI with hotkeys and game score displayed.
 
 <p align="center">
-  <img src="https://image.ibb.co/iH0q9o/source.png" width="640" height="430" alt="Source video frame"/>
+  <img src="https://i.imgur.com/mWvHaUU.png" width="640" height="430" alt="Source video frame"/>
 </p>
 <p align="center">
-  <img src="https://image.ibb.co/cqWxpo/1_dystorcja.png" width="640" height="380" alt="Undistorted video frame"/>
+  <img src="https://i.imgur.com/cycBv94.png" width="640" height="380" alt="Undistorted video frame"/>
 </p>
 <p align="center">
-  <img src="https://preview.ibb.co/epVJvT/3_result.png" width="640" height="380" alt="Result video frame"/>
+  <img src="https://i.imgur.com/CIdNn4A.png" width="640" height="380" alt="Result video frame"/>
 </p>
