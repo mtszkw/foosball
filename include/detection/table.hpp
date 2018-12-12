@@ -20,7 +20,7 @@ namespace detection
 
     public:
         Table(int width, int height)
-            : corners(4), output_size({width, height}), transformationValid(false)
+            : corners(4), output_size(width, height), transformationValid(false)
         {
             output[0] = { (float)width, 0 };
             output[1] = { (float)width, (float)height };

@@ -38,8 +38,8 @@ namespace aruco
      * */
     cv::Ptr<cv::aruco::Dictionary> createDictionary(std::string path, int correction) 
     {
-        if(!std::experimental::filesystem::exists(path))
-            throw std::experimental::filesystem::filesystem_error(
+        if(!std::filesystem::exists(path))
+            throw std::filesystem::filesystem_error(
                 "Cannot open dictionary file " + path, 
                 std::make_error_code(std::errc::no_such_file_or_directory));
 
@@ -77,8 +77,8 @@ namespace aruco
         cv::Ptr<cv::aruco::DetectorParameters> detector(new cv::aruco::DetectorParameters());
         if (!path.empty()) 
         {
-            if(!std::experimental::filesystem::exists(path))
-                throw std::experimental::filesystem::filesystem_error(
+            if(!std::filesystem::exists(path))
+                throw std::filesystem::filesystem_error(
                     "Cannot open configuration file " + path, 
                     std::make_error_code(std::errc::no_such_file_or_directory));
 
