@@ -1,24 +1,21 @@
 # Foosball [![Build Status](https://travis-ci.com/mtszkw/foosball.svg?token=e2qczaZansf4M2Pmpkha&branch=master)](https://travis-ci.com/mtszkw/foosball) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Foosball is an open-source application created by stduents for academic purposes.  
-It allows to process and analyze video recordings of [table soccer](https://en.wikipedia.org/wiki/Table_football) games in order to:
-- detect a table (using [Aruco](https://docs.opencv.org/3.1.0/d5/dae/tutorial_aruco_detection.html) markers),
+Foosball is an open-source application created by students for academic purposes. It allows to process and analyze video recordings of [table soccer](https://en.wikipedia.org/wiki/Table_football) games and:
+- detect a table (using [Aruco](https://docs.opencv.org/3.1.0/d5/dae/tutorial_aruco_detection.html) markers placed on table),
 - detect and track a ball,
 - detect red and blue players,
 - count score (based on ball motion and position)
 
-You can watch [this demonstration video](https://www.youtube.com/watch?v=QQ1gPN9S_Fs) (click [here](https://www.youtube.com/watch?v=YIwG6P5TcKs) for original raw input video) too see how it works in practice. In section at the bottom of this page, you can also find a few screenshots of our video recording in different phases of processing.
+You can watch [this demonstration video](https://www.youtube.com/watch?v=QQ1gPN9S_Fs) (click [here](https://www.youtube.com/watch?v=YIwG6P5TcKs) for original raw input video) too see how it works in practice. In section at the bottom of this page, you can also find a few screenshots from the video recording in different phases of processing.
 
-### Requirements
-- compiler supporting C++17 standard,
-- OpenCV == 3.4.1,
-- CMake >= 3.10.0
+#### Requirements
+- C++17 compiler
+- OpenCV == 3.4.1 <sub>(not tested on newer versions)</sub>
+- CMake >= 3.10.0 <sub>(not tested on newer versions)</sub>
 
-### Configuration
-An executable binary file created after building process requires JSON configuration file named `configuration.json` to work.  
-Configuration parameters that have to specified are listed in `config_example.json` file. You can use this file to create your own `configuration.json` and set internal values adequately.
+#### Configuration
+After you build the project using a build system of your choice, an executable binary file created requires JSON config file named `configuration.json` to work. Sample configuration can be seen in `config_example.json` file which contains all the options needed to run the application (see exaplanation in the table below). You use that file or copy it to create your own configuration with other values.
 
-Meaning of particular configurations:
 <table>
   <tr>
     <th><sub>Parameter</sub></th>
@@ -26,23 +23,23 @@ Meaning of particular configurations:
   </tr>
   <tr>
     <td><sub>videoPath</sub></td>
-    <td><sub>path where video recording file can be found</sub></td>
+    <td><sub>A path to game video file</sub></td>
   </tr>
   <tr>
     <td><sub>videoSkipFramesStep</sub></td>
-    <td><sub>if video FPS rate is too high, it is possible to skip `n` frames after each processed frame</sub></td>
+    <td><sub>If video FPS rate is too high, it is possible to skip `x` frames after each processed frame</sub></td>
   </tr>
   <tr>
     <td><sub>arucoDictionaryPath</sub></td>
-    <td><sub>path where aruco symbols are stored as black and white bitmap</sub></td>
+    <td><sub>A path to black and white bitmap images with aruco symbols</sub></td>
   </tr>
   <tr>
     <td><sub>arucoDetectorConfigPath</sub></td>
-    <td><sub>(optional) path to yaml file containing aruco detector parameters [OpenCV Doc](https://docs.opencv.org/3.4.1/d1/dcd/structcv_1_1aruco_1_1DetectorParameters.html)</sub></td>
+    <td><sub>(optional) A path to YAML file with aruco detector parameters (see [OpenCV documentation](https://docs.opencv.org/3.4.1/d1/dcd/structcv_1_1aruco_1_1DetectorParameters.html))</sub></td>
   </tr>
   <tr>
     <td><sub>calibPerformCalibration</sub></td>
-    <td><sub>TBD</sub></td>
+    <td><sub>If true, camera calibration will be performed at the beginning</sub></td>
   </tr>
   <tr>
     <td><sub>calibConfigPath</sub></td>
@@ -62,11 +59,7 @@ Meaning of particular configurations:
   </tr>
 </table>
 
-### Screenshots
-Below we present few screenshots from our application:  
-- source video raw frame,  
-- frame after lens distortion removal  
-- result frame including detected table area, ball/players markers and GUI with hotkeys and game score displayed.
+#### Screenshots
 
 <p align="center">
   <img src="https://i.imgur.com/mWvHaUU.png" width="640" height="430" alt="Source video frame"/>
