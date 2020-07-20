@@ -7,33 +7,33 @@ on:
     branches: [master]
 
 jobs:
-  release:
+  Release:
     runs-on: ubuntu-latest
     container: morfin/myalpine
     steps:
       - uses: actions/checkout@v2
-      - name: configure
+      - name: Configure
         run: |
           mv config_example.json configuration.json
           mkdir build
           cd build
           cmake -DCMAKE_BUILD_TYPE=Release ..
-      - name: build
+      - name: Build
         run: |
           cd build
           cmake --build . --config Release
-  debug:
+  Debug:
     runs-on: ubuntu-latest
     container: morfin/myalpine
     steps:
       - uses: actions/checkout@v2
-      - name: configure
+      - name: Configure
         run: |
           mv config_example.json configuration.json
           mkdir build
           cd build
           cmake -DCMAKE_BUILD_TYPE=Debug ..
-      - name: build
+      - name: Build
         run: |
           cd build
           cmake --build . --config Debug
