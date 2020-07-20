@@ -1,4 +1,4 @@
-# Foosball [![Build Status](https://travis-ci.com/mtszkw/foosball.svg?token=e2qczaZansf4M2Pmpkha&branch=master)](https://travis-ci.com/mtszkw/foosball) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+# Foosball ![CI](https://github.com/mtszkw/foosball/workflows/CI/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Foosball is an open-source application created by students for academic purposes. It allows to process and analyze video recordings of [table soccer](https://en.wikipedia.org/wiki/Table_football) games and:
 - detect a table (using [Aruco](https://docs.opencv.org/3.1.0/d5/dae/tutorial_aruco_detection.html) markers placed on table),
